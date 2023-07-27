@@ -1,1337 +1,1913 @@
-<!DOCTYPE html>
-
+<html>
 <head>
-    <script>
-        /**
-        * SCF_GATEWAY：SCF 云函数网关地址
-        * SITE_NAME：站点名称
-        */
-        window.GLOBAL_CONFIG = {
-            SCF_GATEWAY: "https://one.ziantt.workers.dev",
-            SITE_NAME: "bitF1a5h DEMO",
-            IS_CF: true
-        };
-        if (window.GLOBAL_CONFIG.SCF_GATEWAY.indexOf('workers') === -1) {
-            window.GLOBAL_CONFIG.SCF_GATEWAY += '/fodi/';
-            window.GLOBAL_CONFIG.IS_CF = false;
-        }
-        // if (location.protocol === 'http:') {
-        //     location.href = location.href.replace(/http/, 'https');
-        // }
-    </script>
-    <meta charset="utf-8">
-    <meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" name="viewport">
-    <script src="//s0.pstatp.com/cdn/expire-1-M/ionicons/4.5.6/ionicons.js"></script>
-    <script src="//s0.pstatp.com/cdn/expire-1-M/marked/0.6.2/marked.min.js"></script>
-    <script src="//s0.pstatp.com/cdn/expire-1-M/highlight.js/9.15.6/highlight.min.js"></script>
-    <link href="//s0.pstatp.com/cdn/expire-1-M/highlight.js/9.15.6/styles/github.min.css" rel="stylesheet" />
-    <link href="//s0.pstatp.com/cdn/expire-1-M/github-markdown-css/3.0.1/github-markdown.min.css" rel="stylesheet" />
-    <script src="//s0.pstatp.com/cdn/expire-1-M/jquery/3.4.0/jquery.min.js"></script>
-    <script src="//s0.pstatp.com/cdn/expire-1-M/fancybox/3.5.7/jquery.fancybox.min.js"></script>
-    <link href="//s0.pstatp.com/cdn/expire-1-M/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet" />
-    <style>
-        .password-wrapper {
-            display: flex;
-            align-items: center;
-        }
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>X5 调试页面</title>
+    <meta name="description" content=""/>
+    <meta name="keywords" content=""/>
+    <meta name="author" content="Author for Onextrapixel"/>
 
-        .password {
-            margin: 0 auto;
-            padding-top: 1em;
-            display: none;
-        }
-
-        .password input {
-            height: 2em;
-            outline: none;
-            border: solid rgb(218, 215, 215) 1px;
-        }
-
-        .password button {
-            background: white;
-            height: 2em;
-            outline: none;
-            border: solid rgb(218, 215, 215) 1px;
-        }
-
-        .password button:hover {
-            color: white;
-            background: rgb(218, 215, 215);
-        }
-
-        pre * {
-            font-family: Courier New;
-        }
-
-        .preview {
-            display: none;
-            font-size: .8em;
-        }
-
-        .content {
-            clear: both;
-            padding: 0 1em;
-            margin: 0 auto;
-            text-align: center;
-        }
-
-        .file-name {
-            line-height: 1em;
-            padding: 1em 1em 0;
-            text-align: center;
-            white-space: nowrap;
-            overflow: hidden;
-        }
-
-        .btn {
-            float: right;
-            text-align: center;
-            border: solid rgb(218, 215, 215) 1px;
-            border-radius: 1em;
-            margin: 1em .2em;
-            width: 4em;
-            height: 2em;
-            line-height: 2em;
-            user-select: none;
-            -moz-user-select: none;
-            -o-user-select: none;
-            -khtml-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-        }
-
-        .btn:hover {
-            color: white;
-            background: rgb(218, 215, 215);
-        }
-
-        .btn.download {
-            margin-right: 1em;
-        }
-
-        #arrow-back,
-        #arrow-forward {
-            color: rgb(218, 215, 215);
-        }
-
-        .loading-wrapper {
-            display: none;
-            position: fixed;
-            height: 2em;
-            line-height: 2em;
-            margin-top: .5em;
-            width: 100%;
-            z-index: 1;
-        }
-
-        .loading {
-            color: white;
-            background: rgb(218, 215, 215);
-            height: 100%;
-            width: 8em;
-            margin: 0 auto;
-            text-align: center;
-            border-radius: 1em;
-        }
-
-        ion-icon {
-            font-size: 1.5em;
-        }
-
-        * {
-            box-sizing: border-box;
-            font-family: serif;
-        }
-
-        .markdown-body {
-            min-width: 200px;
-            margin: 0 auto;
-            padding: .7em 1em;
-            font-size: .8em;
-        }
-
-        .markdown-body h1,
-        h2,
-        h3,
-        h4,
-        h5,
-        h6 {
-            margin-top: 0;
-        }
-
-        .markdown-body img {
-            max-width: 90%;
-            max-height: 800px;
-            width: auto;
-            height: auto;
-            display: block;
-            margin: 0 auto;
-        }
-
-        body {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        .header-wrapper {
-            position: fixed;
-            height: 3em;
-            width: 100%;
-            -moz-user-select: none;
-            -o-user-select: none;
-            -khtml-user-select: none;
-            -webkit-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-        }
-
-        .header {
-            padding: 0 1.8em 0 1em;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            border-bottom: solid rgb(218, 215, 215) 1px;
-        }
-
-        .logo {
-            margin-right: .3em;
-        }
-
-        .site {
-            white-space: nowrap;
-            /* margin-left: auto;
-                padding-left: 2em; */
-        }
-
-        .nav {
-            width: 100%;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        .nav-path,
-        .nav-arr {
-            font-size: 1em;
-            height: 1.5em;
-            margin-right: .3em;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            cursor: default;
-        }
-
-        #main-page:hover,
-        .nav-path:hover,
-        .tree-node:hover,
-        .row.file-wrapper:hover {
-            color: rgb(90, 101, 133);
-            cursor: pointer;
-        }
-
-
-        .container {
-            position: fixed;
-            width: 100%;
-            height: calc(100% - 3em);
-            margin-top: 3em;
-        }
-
-        .main {
+    <style type="text/css">
+          body, html {
+              height: 100%;
+              margin: 0;
+              -webkit-font-smoothing: antialiased;
+              font-weight: 100;
+              background: #ffffff;
+              text-align: center;
+              font-family: helvetica;
+          }
+          
+          .tabs {
+            width: 350px;
+            float: none;
+            list-style: none;
             position: relative;
-            height: 100%;
+            padding: 0;
+            margin: 5px auto;
+          }
+          .tabs li{
+            float: left;
+          }
+          .tabs label {
+              display: block;
+              padding: 10px 10px;
+              border-radius: 2px 2px 0 0;
+              color: #000;
+              font-size: 24px;
+              font-weight: normal;
+              font-family: 'Roboto', helveti;
+              background: rgba(255,255,255,0.2);
+              cursor: pointer;
+              position: relative;
+              top: 3px;
+              -webkit-transition: all 0.2s ease-in-out;
+              -moz-transition: all 0.2s ease-in-out;
+              -o-transition: all 0.2s ease-in-out;
+              transition: all 0.2s ease-in-out;
+          }
+          .tabs label:hover {
+            background: rgba(255,255,255,0.5);
+            top: 0;
+          }
+          
+          [id^=tab]:checked + label {
+            background: #6C6C6C;
+            color: white;
+            top: 0;
+          }
+          
+          [id^=tab]:checked ~ [id^=tab-content] {
+              display: block;
+          }
+          .tab-content{
+            z-index: 2;
+            display: none;
+            text-align: left;
             width: 100%;
-        }
-
-        .left {
+            font-size: 20px;
+            line-height: 140%;
+            padding-top: 0px;
+            background: #6C6C6C;
+            padding: 7px;
+            color: white;
             position: absolute;
-            display: inline-grid;
-            width: 20%;
-            height: 100%;
-            font-size: .8em;
-            overflow: scroll;
+            left: 0;
+            box-sizing: border-box;
+            -webkit-animation-duration: 0.5s;
+            -o-animation-duration: 0.5s;
+            -moz-animation-duration: 0.5s;
+            animation-duration: 0.5s;
+          }
+
+
+        .tipsStyle 
+        {
+            font-size: 9px;
+            color: #FFFFFF;
+            -webkit-border-radius:3px;
+            background: -webkit-gradient(linear, 0 0, 0 100%, from(#bcbcbc), to(#5c5c5c));
+        }
+        body 
+        {
+            background-color: #FFFFFF;
+            font-size: large;
+        }
+        .borderRadius 
+        {
+            -webkit-border-radius:10px;
+            background-color: #EFEFEF;
+            border:1px solid #C9CACA
+        }
+        table 
+        {
+          white-space: normal;
+          line-height: normal;
+          font-weight: normal;
+          font-size: large;
         }
 
-        .tree-node-wrapper {
-            margin-left: 1.5em;
-        }
-
-        .tree-node {
-            display: flex;
-            align-items: center;
-        }
-
-        .tree-node-name {
-            margin-left: .3em;
-            white-space: nowrap;
-        }
-
-        .right {
-            position: absolute;
-            width: 80%;
-            height: 100%;
-            margin-left: 20%;
-            overflow: scroll;
-        }
-
-        .row {
-            height: 2.5em;
-            padding: 0 .8em 0 1em;
-            display: flex;
-            align-items: center;
-            border-bottom: solid rgb(218, 215, 215) 1px;
-        }
-
-        .row.file-wrapper {
-            font-size: .8em;
-            padding: 0 1em;
-            height: 2em;
-        }
-
-        .file {
-            width: 100%;
-            display: flex;
-            align-items: center;
-        }
-
-        .name {
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            width: 70%;
-            padding-left: .3em;
-        }
-
-        .list-header .name {
-            width: calc(70% + 1.1em);
-            padding-left: 0;
-        }
-
-        .time {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            text-align: right;
-            ;
-            width: 133px;
-        }
-
-        .size {
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            margin-left: auto;
-        }
-
-        @media screen and (max-width: 1000px) {
-            .left {
-                display: none;
-            }
-
-            .right {
-                width: 100%;
-                margin-left: initial;
-            }
-        }
-
-        @media screen and (max-width: 800px) {
-            .name {
-                width: 60%;
-            }
-
-            .list-header .name {
-                width: calc(60% + 1.1em);
-            }
-
-            .file-name {
-                overflow-x: scroll;
-                height: 100%;
-            }
-        }
-
-        @media screen and (max-width: 600px) {
-            .name {
-                width: 75%;
-            }
-
-            .time {
-                display: none;
-            }
-
-            .header {
-                padding: 0 .3em;
-            }
-
-            .row {
-                padding: 0 .3em;
-            }
-
-            .row.file-wrapper {
-                padding: 0 .3em;
-                height: 3em;
-            }
-
-            .markdown-body {
-                padding: .6em .3em;
-            }
-
-            .file-name {
-                padding: 1em .3em 0;
-            }
-
-            .content {
-                padding: 0 .3em;
-            }
-
-            .btn.download {
-                margin-right: .3em;
-            }
-
-            .logo {
-                width: 2em;
-                height: 2em;
-            }
 
 
-        }
     </style>
-    <script>
-        function createCORSRequest(method, url, timeout) {
-            let xhr = new XMLHttpRequest();
-            if ('withCredentials' in xhr) {
-                xhr.open(method, url, true);
-            } else if (typeof XDomainRequest !== 'undefined') {
-                xhr = new XDomainRequest();
-                xhr.open(method, url);
-            } else {
-                xhr = null;
-            }
-            if (xhr) {
-                xhr.timeout = timeout;
-            }
-            return xhr;
-        }
-
-        function sendRequest(method, url, data, headers, callback, error, times) {
-            let xhr = createCORSRequest(method, url, 2500);
-            xhr.onreadystatechange = () => {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    callback(xhr.responseText);
-                }
-            };
-            xhr.timeout = xhr.onerror = () => {
-                if (!times) {
-                    times = 0;
-                }
-                console.log({
-                    url: url,
-                    data: data,
-                    times: times
-                })
-                if (times < 1) {
-                    sendRequest(method, url, data, headers, callback, error, times + 1);
-                } else if (typeof error === 'function') {
-                    error();
-                }
-            }
-            if (headers) {
-                for (key in headers) {
-                    if (headers.hasOwnProperty(key)) {
-                        xhr.setRequestHeader(key, headers[key]);
-                    }
-                }
-            }
-            if (data) {
-                xhr.send(data);
-            } else {
-                xhr.send();
-            }
-        }
-
-        function renderPage(data, cache) {
-            let files;
-            if (data) {
-                files = JSON.parse(data);
-                window.fileCache.set(files.parent, files);
-                preCache(files, 0);
-            } else {
-                files = cache;
-            }
-            if (files.parent === window.backFordwardCache.current) {
-                renderPath(files.parent);
-                if (files.encrypted) {
-                    handleEncryptedFolder(files);
-                } else {
-                    renderFileList(files);
-                }
-                renderTreeNode(files);
-            }
-            if (document.body.getAttribute('hidden')) {
-                document.body.removeAttribute('hidden');
-            }
-            document.querySelector('.loading-wrapper').style.display = 'none';
-        }
-
-        function renderPath(path) {
-            const createPathSpan = (text, path) => {
-                let pathSpan = document.createElement('span');
-                pathSpan.innerHTML = text.length > 20 ? text.substring(0, 20) + '..' : text;
-                pathSpan.className = text === '/' ? 'nav-arr' : 'nav-path';
-                if (path) {
-                    addPathListener(pathSpan, path);
-                }
-                return pathSpan;
-            };
-
-            const paths = path.split('/');
-            let pathSpanWrapper = document.getElementById('path');
-            pathSpanWrapper.innerHTML = '';
-            pathSpanWrapper.appendChild(createPathSpan(window.api.root));
-            let continualPath = '/';
-            for (let i = 1; i < paths.length - 1; i++) {
-                continualPath += paths[i];
-                pathSpanWrapper.appendChild(createPathSpan(paths[i], continualPath));
-                pathSpanWrapper.appendChild(createPathSpan('/'));
-                continualPath += '/';
-            }
-            pathSpanWrapper.appendChild(createPathSpan(paths[paths.length - 1]));
-        }
-
-        function renderFileList(files) {
-            switchRightDisplay();
-
-            const createFileWrapper = (type, name, time, size, path, url) => {
-                let fileWrapper = document.getElementById('file-wrapper-templete').content.cloneNode(true);
-                fileWrapper.querySelector('ion-icon').setAttribute('name', type);
-                fileWrapper.querySelector('.name').innerHTML = name;
-                fileWrapper.querySelector('.time').innerHTML = time;
-                fileWrapper.querySelector('.size').innerHTML = size;
-                addFileListLineListener(fileWrapper.querySelector('.row.file-wrapper'), path, url, size);
-                return fileWrapper;
-            };
-
-            const formatDate = date => {
-                const addZero = num => num > 9 ? num : '0' + num;
-                date = new Date(date);
-                const year = date.getFullYear();
-                const month = addZero(date.getMonth() + 1);
-                const day = addZero(date.getDate());
-                const hour = addZero(date.getHours());
-                const minute = addZero(date.getMinutes());
-                const second = addZero(date.getSeconds());
-                return 'yyyy-MM-dd HH:mm:ss'
-                    .replace('yyyy', year)
-                    .replace('MM', month)
-                    .replace('dd', day)
-                    .replace('HH', hour)
-                    .replace('mm', minute)
-                    .replace('ss', second);
-            };
-
-            const formatSize = size => {
-                let count = 0;
-                while (size >= 1024) {
-                    size /= 1024;
-                    count++;
-                }
-                size = size.toFixed(2);
-                switch (count) {
-                    case 1:
-                        size += ' KB';
-                        break;
-                    case 2:
-                        size += ' MB';
-                        break;
-                    case 3:
-                        size += ' GB';
-                        break;
-                    case 4:
-                        size += ' TB';
-                        break;
-                    case 5:
-                        size += ' PB';
-                        break;
-                    default:
-                        size += ' B';
-                }
-                return size;
-            };
-
-            let fileList = document.getElementById('file-list');
-            fileList.innerHTML = '';
-            files.files.forEach(file => {
-                if (file.name.split('.').pop() === 'md') {
-                    if (file.url) {
-                        renderReadme(files.parent + '/' + file.name, file.url);
-                    }
-                } else {
-                    const parent = files.parent === window.api.root ? '' : files.parent;
-                    fileList.appendChild(createFileWrapper(
-                        file.url ? 'document' : 'folder',
-                        file.name,
-                        formatDate(file.time),
-                        formatSize(file.size),
-                        parent + '/' + file.name,
-                        file.url
-                    ));
-                }
-            });
-        }
-
-        async function renderTreeNode(files) {
-            const createTreeNodeWrapper = (array, type, name, path) => {
-                let treeNodeWrapper = document.getElementById('tree-node-wrapper-template').content
-                    .cloneNode(true);
-                let icons = treeNodeWrapper.querySelectorAll('ion-icon');
-                icons[0].setAttribute('name', array);
-                icons[1].setAttribute('name', type);
-                treeNodeWrapper.querySelector('.tree-node-name').innerText = name;
-                treeNodeWrapper.appendNode = node => treeNodeWrapper.querySelector('.tree-node-wrapper').append(
-                    node);
-                addTreeNodeListener(treeNodeWrapper.querySelector('.tree-node'), path);
-                return treeNodeWrapper;
-            }
-
-            const paths = files.parent.split('/');
-            let absolutePath = max => {
-                let absolutePath = '';
-                for (let j = 1; j <= max; j++) {
-                    absolutePath += '/' + paths[j];
-                }
-                return absolutePath;
-            };
-            let maxIndex = paths.length - 1;
-            let currentTreeNode = createTreeNodeWrapper('arrow-dropdown',
-                'folder-open',
-                paths[maxIndex],
-                absolutePath(maxIndex)
-            );
-            files.files.forEach(file => {
-                if (!file.url) {
-                    currentTreeNode.appendNode(createTreeNodeWrapper('arrow-dropright',
-                        'folder',
-                        file.name,
-                        files.parent + '/' + file.name
-                    ));
-                }
-            });
-
-            for (let i = maxIndex - 1; i > 0; i--) {
-                const currentTreeNodeParentAbsolutePath = absolutePath(i);
-                let currentTreeNodeParent = createTreeNodeWrapper('arrow-dropdown',
-                    'folder',
-                    paths[i],
-                    currentTreeNodeParentAbsolutePath
-                );
-                let cache = window.fileCache.get(currentTreeNodeParentAbsolutePath);
-                if (cache) {
-                    cache.files.forEach(file => {
-                        if (!file.url) {
-                            if (file.name === paths[i + 1]) {
-                                currentTreeNodeParent.appendNode(currentTreeNode);
-                            } else {
-                                currentTreeNodeParent.appendNode(createTreeNodeWrapper(
-                                    'arrow-dropright',
-                                    'folder',
-                                    file.name,
-                                    currentTreeNodeParentAbsolutePath + '/' + file.name
-                                ));
-                            }
-                        }
-                    });
-                } else {
-                    currentTreeNodeParent.appendNode(currentTreeNode);
-                }
-                currentTreeNode = currentTreeNodeParent;
-            }
-
-            const treeRoot = document.getElementById('tree-root');
-            treeRoot.innerHTML = '';
-            const cache = window.fileCache.get(window.api.root);
-            const currentNodeName = currentTreeNode.querySelector('.tree-node-name').innerText;
-            if (cache) {
-                cache.files.forEach(file => {
-                    if (!file.url) {
-                        if (file.name === currentNodeName) {
-                            treeRoot.append(currentTreeNode);
-                        } else {
-                            treeRoot.append(createTreeNodeWrapper(
-                                'arrow-dropright',
-                                'folder',
-                                file.name,
-                                window.api.root + file.name
-                            ));
-                        }
-                    }
-                });
-            } else {
-                treeRoot.append(currentTreeNode);
-            }
-        }
-
-        async function renderReadme(path, url) {
-            const render = text => {
-                let markedText;
-                try {
-                    markedText = marked(text, {
-                        gfm: true,
-                        highlight: (code, lang, callback) => {
-                            return hljs.highlight(lang, code).value;
-                        }
-                    });
-                } catch (e) {
-                    markedText = marked(text, {
-                        gfm: true,
-                        highlight: (code, lang, callback) => {
-                            return hljs.highlight('bash', code).value;
-                        }
-                    });
-                }
-                if (window.backFordwardCache.current + '/README.md' === path) {
-                    if (!window.backFordwardCache.preview) {
-                        document.getElementById('readme').innerHTML = markedText;
-                        document.querySelector('.markdown-body').style.display = 'block';
-                    }
-                }
-                let cache = window.fileCache.get(path);
-                if (!cache || cache === true) {
-                    window.fileCache.set(path, text);
-                }
-            };
-            let text = window.fileCache.get(path);
-            if (text === true) {
-                let cacheWaitReadmeFetch = setInterval(() => {
-                    text = window.fileCache.get(path);
-                    if (typeof text === 'object') {
-                        render(text, path);
-                        clearInterval(cacheWaitReadmeFetch);
-                    } else if (text === false) {
-                        clearInterval(cacheWaitReadmeFetch);
-                    }
-                }, 100);
-            } else if (text) {
-                render(text, path);
-            } else {
-                window.fileCache.set(path, true);
-                sendRequest('GET', url, null, null, text => render(text, path), () => window.fileCache.set(path, false));
-            }
-        }
-
-        function handleEncryptedFolder(files) {
-            switchRightDisplay('encrypted');
-            const password = document.querySelector('.password');
-            const input = password.querySelector('input');
-            const button = password.querySelector('button');
-            const buttonParent = button.parentElement;
-            const buttonClone = button.cloneNode(true);
-            buttonParent.replaceChild(buttonClone, button);
-            input.placeholder = '请输入密码';
-            buttonClone.addEventListener('click', event => {
-                const passwd = input.value;
-                if (!input.value) {
-                    return;
-                }
-                input.value = '';
-                input.placeholder = '正在验证..';
-                sendRequest(window.api.method,
-                    window.api.url,
-                    window.api.formatPayload(files.parent, passwd),
-                    window.api.headers,
-                    data => {
-                        const newFiles = JSON.parse(data);
-                        if (newFiles.encrypted) {
-                            input.placeholder = '密码错误';
-                        } else {
-                            window.fileCache.set(newFiles.parent, newFiles);
-                            fetchFileList(newFiles.parent);
-                        }
-                    },
-                    () => window.fileCache.set(newFiles.parent, false)
-                );
-            });
-        }
-
-        function addPathListener(elem, path) {
-            elem.addEventListener('click', event => {
-                fetchFileList(path);
-                switchBackForwardStatus(path);
-            });
-        }
-
-        function addTreeNodeListener(elem, path) {
-            elem.addEventListener('click', event => {
-                fetchFileList(path);
-                switchBackForwardStatus(path);
-            });
-        }
-
-        function addFileListLineListener(elem, path, url, size) {
-            if (url) {
-                elem.addEventListener('click', event => {
-                    window.backFordwardCache.preview = true;
-                    const previewHandler = {
-                        copyTextContent: (source, text) => {
-                            let result = false;
-                            let target = document.createElement('pre');
-                            target.style.opacity = '0';
-                            target.textContent = text || source.textContent;
-                            document.body.appendChild(target);
-                            try {
-                                let range = document.createRange();
-                                range.selectNode(target);
-                                window.getSelection().removeAllRanges();
-                                window.getSelection().addRange(range);
-                                document.execCommand('copy');
-                                window.getSelection().removeAllRanges();
-                                result = true;
-                            } catch (e) { }
-                            document.body.removeChild(target);
-                            return result;
-                        },
-                        fileType: suffix => {
-                            Array.prototype.contains = function (search) {
-                                const object = this;
-                                for (const key in object) {
-                                    if (object.hasOwnProperty(key)) {
-                                        if ((eval('/' + search + '/i')).test(object[key])) {
-                                            return true;
-                                        }
-                                    }
-                                }
-                                return false;
-                            };
-                            if (['bmp', 'jpg', 'png', 'svg', 'webp', 'gif'].contains(suffix)) {
-                                return 'image';
-                            } else if (['mp3', 'flac', 'wav'].contains(suffix)) {
-                                return 'audio';
-                            } else if (['mp4', 'avi', 'mkv', 'flv', 'm3u8'].contains(suffix)) {
-                                return 'video';
-                            } else if (
-                                [
-                                    'txt', 'js', 'json', 'css', 'html', 'java', 'c', 'cpp', 'php',
-                                    'cmd', 'ps1',
-                                    'bat', 'sh', 'py', 'go', 'asp',
-                                ].contains(suffix)
-                            ) {
-                                return 'text';
-                            } else if (
-                                ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'mpp', 'rtf', 'vsd', 'vsdx'].contains(suffix)
-                            ) {
-                                return 'office';
-                            }
-                        },
-                        loadResource: (resource, callback) => {
-                            let type;
-                            switch (resource.split('.').pop()) {
-                                case 'css':
-                                    type = 'link';
-                                    break;
-                                case 'js':
-                                    type = 'script';
-                                    break;
-                            }
-                            let element = document.createElement(type);
-                            let loaded = false;
-                            if (typeof callback === 'function') {
-                                element.onload = element.onreadystatechange = () => {
-                                    if (!loaded && (!element.readyState || /loaded|complete/.test(
-                                        element.readyState))) {
-                                        element.onload = element.onreadystatechange = null;
-                                        loaded = true;
-                                        callback();
-                                    }
-                                }
-                            }
-                            if (type === 'link') {
-                                element.href = resource;
-                                element.rel = 'stylesheet';
-                            } else {
-                                element.src = resource;
-                            }
-                            document.getElementsByTagName('head')[0].appendChild(element);
-                        },
-
-                        createDplayer: (video, type, elem) => {
-                            const host = '//s0.pstatp.com/cdn/expire-1-M';
-                            const resources = [
-                                '/dplayer/1.25.0/DPlayer.min.css',
-                                '/dplayer/1.25.0/DPlayer.min.js',
-                                '/hls.js/0.12.4/hls.light.min.js',
-                                '/flv.js/1.5.0/flv.min.js'
-                            ];
-                            let unloadedResourceCount = resources.length;
-                            resources.forEach(resource => {
-                                previewHandler.loadResource(host + resource, () => {
-                                    if (!--unloadedResourceCount) {
-                                        let option = {
-                                            url: video
-                                        }
-                                        if (type === 'flv') {
-                                            option.type = 'flv';
-                                        }
-                                        new DPlayer({
-                                            container: elem,
-                                            screenshot: true,
-                                            video: option
-                                        });
-                                    }
-                                })
-                            });
-                        }
-                    }
-                    const suffix = path.split('.').pop();
-                    let content = document.querySelector('.content');
-                    switch (previewHandler.fileType(suffix)) {
-                        case 'image':
-                            let img = new Image();
-                            img.style.maxWidth = '100%';
-                            img.src = url;
-                            let fancy = document.createElement('a');
-                            fancy.setAttribute('data-fancybox', 'image');
-                            fancy.href = img.src;
-                            fancy.append(img);
-                            content.innerHTML = '';
-                            content.append(fancy);
-                            break;
-                        case 'audio':
-                            let audio = new Audio();
-                            audio.style.outline = 'none';
-                            audio.preload = 'auto';
-                            audio.controls = 'controls';
-                            audio.style.width = '100%';
-                            audio.src = url;
-                            content.innerHTML = '';
-                            content.append(audio);
-                            break;
-                        case 'video':
-                            let video = document.createElement('div');
-                            previewHandler.createDplayer(url, suffix, video);
-                            content.innerHTML = '';
-                            content.append(video);
-                            break;
-                        case 'text':
-                            let pre = document.createElement('pre');
-                            let code = document.createElement('code');
-                            pre.append(code);
-                            pre.style.background = 'rgb(245,245,245)';
-                            pre.style['overflow-x'] = 'scroll';
-                            pre.classList.add(suffix);
-                            content.style['text-align'] = 'initial';
-                            content.innerHTML = '';
-                            content.append(pre);
-                            sendRequest('GET', url, null, null, data => {
-                                code.textContent = data;
-                                if (size.indexOf(' B') >= 0 || size.indexOf(' KB') &&
-                                    size.split(' ')[0] < 100
-                                ) {
-                                    hljs.highlightBlock(pre);
-                                }
-                            });
-                            break;
-                        case 'office':
-                            const officeOnline = '//view.officeapps.live.com/op/view.aspx?src=' + encodeURIComponent(url);
-                            let div = document.createElement('div');
-                            div.style.lineHeight = '2em';
-                            div.style.background = 'rgba(218, 215, 215, 0.21)';
-                            div.style.webkitTapHighlightColor = 'rgba(0, 0, 0, 0)';
-                            div.style.cursor = 'pointer';
-                            div.innerHTML = '新窗口打开';
-                            div.addEventListener('click', () => window.open(officeOnline));
-                            content.innerHTML = '';
-                            content.appendChild(div);
-                            if (document.body.clientWidth >= 480) {
-                                let iframe = document.createElement('iframe');
-                                iframe.width = '100%';
-                                iframe.style.height = '41em';
-                                iframe.style.border = '0';
-                                iframe.src = officeOnline;
-                                content.appendChild(iframe);
-                            }
-                            break;
-                        default:
-                            content.style['text-align'] = 'center';
-                            content.innerHTML = '该文件不支持预览';
-                            break;
-
-                    }
-                    document.querySelector('.file-name').innerHTML = path;
-                    document.querySelector('.btn.download').addEventListener('click',
-                        () => location.href = url
-                    );
-                    document.querySelector('.btn.quote').addEventListener('click',
-                        event => {
-                            previewHandler.copyTextContent(null, window.api.url + '?file=' + path);
-                            const btn = document.querySelector('.btn.quote');
-                            btn.innerHTML = '已复制';
-                            setTimeout(() => btn.innerHTML = '引用', 250);
-                        }
-                    );
-                    document.querySelector('.btn.share').addEventListener('click',
-                        event => {
-                            const sharePath = () => {
-                                let arr = window.backFordwardCache.current.split('/');
-                                let r = '';
-                                for (let i = 1; i < arr.length; i++) {
-                                    r += '/' + arr[i];
-                                }
-                                return r;
-                            }
-                            previewHandler.copyTextContent(null,
-                                window.location.origin +
-                                window.location.pathname +
-                                '?path=' + sharePath());
-                            const btn = document.querySelector('.btn.share');
-                            btn.innerHTML = '已复制';
-                            setTimeout(() => btn.innerHTML = '分享', 250);
-                        }
-                    );
-                    switchRightDisplay('preview');
-
-                    let start = null;
-                    let right = document.querySelector('.right');
-                    const scrollToBottom = (timestamp) => {
-                        if (!start) start = timestamp;
-                        let progress = timestamp - start;
-                        let last = right.scrollTop;
-                        right.scrollTo(0, right.scrollTop + 14);
-                        if (right.scrollTop !== last && progress < 1000 * 2) {
-                            window.requestAnimationFrame(scrollToBottom);
-                        }
-                    };
-                    window.requestAnimationFrame(scrollToBottom);
-                });
-            } else {
-                elem.addEventListener('click', event => {
-                    fetchFileList(path);
-                    switchBackForwardStatus(path);
-                });
-            }
-        }
-
-        function addBackForwardListener() {
-            document.getElementById('arrow-back').addEventListener('click', back);
-            document.getElementById('arrow-forward').addEventListener('click', forward);
-            document.querySelector('#main-page').addEventListener('click', () => {
-                fetchFileList(window.api.root);
-                switchBackForwardStatus(window.api.root);
-            });
-        }
-
-        function switchRightDisplay(display) {
-            if (display === 'preview') {
-                document.querySelector('.list-header').style.display = 'none';
-                document.querySelector('#file-list').style.display = 'none';
-                document.querySelector('.markdown-body').style.display = 'none';
-                document.querySelector('.password').style.display = 'none';
-                document.querySelector('.preview').style.display = 'initial'
-            } else if (display === 'encrypted') {
-                document.querySelector('.list-header').style.display = 'none';
-                document.querySelector('#file-list').style.display = 'none';
-                document.querySelector('.markdown-body').style.display = 'none';
-                document.querySelector('.preview').style.display = 'none';
-                document.querySelector('.password').style.display = 'initial';
-                document.querySelector('#readme').innerHTML = '';
-                let content = document.querySelector('.preview .content');
-                if (content) {
-                    document.querySelector('.preview .content').innerHTML = '';
-                }
-            } else {
-                document.querySelector('.list-header').style.display = 'initial';
-                document.querySelector('#file-list').style.display = 'initial';
-                document.querySelector('.markdown-body').style.display = 'none'
-                document.querySelector('.preview').style.display = 'none';
-                document.querySelector('.password').style.display = 'none';
-                document.querySelector('#readme').innerHTML = '';
-                let content = document.querySelector('.preview .content');
-                if (content) {
-                    document.querySelector('.preview .content').innerHTML = '';
-                }
-            }
-        }
-
-        function switchBackForwardStatus(path) {
-            if (path) {
-                window.backFordwardCache.deepest = path;
-            }
-            if (window.backFordwardCache.root !== window.backFordwardCache.current) {
-                window.backFordwardCache.backable = true;
-                document.getElementById('arrow-back').style.color = 'black';
-            } else {
-                window.backFordwardCache.backable = false;
-                document.getElementById('arrow-back').style.color = 'rgb(218, 215, 215)';
-            }
-            if (window.backFordwardCache.deepest !== window.backFordwardCache.current) {
-                window.backFordwardCache.forwardable = true;
-                document.getElementById('arrow-forward').style.color = 'black';
-            } else {
-                window.backFordwardCache.forwardable = false;
-                document.getElementById('arrow-forward').style.color = 'rgb(218, 215, 215)';
-            }
-        }
-
-        function back() {
-            if (!window.backFordwardCache.backable) {
-                return;
-            }
-            if (window.backFordwardCache.preview) {
-                fetchFileList(window.backFordwardCache.current);
-            } else {
-                let former = (() => {
-                    let formerEndIndex = window.backFordwardCache.current.lastIndexOf('/');
-                    return window.backFordwardCache.current.substring(0, formerEndIndex);
-                })();
-                former = former || window.api.root;
-                fetchFileList(former);
-                switchBackForwardStatus();
-            }
-            // console.log(window.backFordwardCache);
-        }
-
-        function forward() {
-            if (!window.backFordwardCache.forwardable) {
-                return
-            }
-            const current = window.backFordwardCache.current === window.api.root ? '' : window.backFordwardCache.current
-            const subLength = current ? current.length : 0;
-            const later = current + '/' +
-                window.backFordwardCache.deepest.substring(subLength).split('/')[1];
-            fetchFileList(later);
-            switchBackForwardStatus();
-            // console.log(window.backFordwardCache);
-        }
-
-        async function preCache(files, level) {
-            if (level > 2) return;
-            files.files.forEach(file => {
-                const parent = files.parent === '/' ? '' : files.parent
-                const path = parent + '/' + file.name;
-                if (!file.url) {
-                    // console.log('caching ' + path + ', level ' + level);
-                    window.fileCache.set(path, true);
-                    sendRequest(window.api.method,
-                        window.api.url,
-                        window.api.formatPayload(path),
-                        window.api.headers,
-                        data => {
-                            const files = JSON.parse(data);
-                            window.fileCache.set(path, files);
-                            preCache(files, level + 1);
-                        },
-                        () => window.fileCache.set(path, false)
-                    );
-                } else if (file.name.split('.').pop() === 'md') {
-                    // console.log('caching ' + path + ', level ' + level);
-                    window.fileCache.set(path, true);
-                    sendRequest('GET', file.url, null, null, text => window.fileCache.set(path, text), () => window.fileCache.set(path, false));
-                }
-            });
-        }
-
-        async function preCacheCheck(cache, path) {
-            cache.files.forEach(file => {
-                const prefix = path === window.api.root ? '' : path;
-                const nextPath = prefix + '/' + file.name;
-                const pathCache = window.fileCache.get(nextPath);
-                if (!file.url) {
-                    if (!pathCache && pathCache !== true) {
-                        // console.log('inner caching ' + nextPath);
-                        window.fileCache.set(nextPath, true);
-                        sendRequest(window.api.method,
-                            window.api.url,
-                            window.api.formatPayload(nextPath),
-                            window.api.headers,
-                            data => {
-                                const files = JSON.parse(data);
-                                window.fileCache.set(nextPath, files);
-                                preCache(files, 0);
-                            },
-                            () => window.fileCache.set(nextPath, false)
-                        );
-                    }
-                } else if (file.name.split('.').pop() === 'md') {
-                    if (!pathCache && pathCache !== true) {
-                        // console.log('inner caching ' + nextPath);
-                        window.fileCache.set(nextPath, true);
-                        sendRequest('GET', file.url, null, null, text => window.fileCache.set(nextPath,
-                            text), () => window.fileCache.set(nextPath,
-                                false));
-                    }
-                }
-            });
-        }
-
-        function fetchFileList(path) {
-            // console.log('fetching ' + path);
-            let loading = document.querySelector('.loading-wrapper');
-            loading.style.display = 'initial';
-            window.backFordwardCache.preview = false;
-            window.backFordwardCache.current = path;
-            let cache = window.fileCache.get(path);
-            if (cache === true) {
-                let cacheWaitFileListFetch = setInterval(() => {
-                    cache = window.fileCache.get(path);
-                    if (typeof cache === 'object') {
-                        renderPage(null, cache);
-                        preCacheCheck(cache, path);
-                        clearInterval(cacheWaitFileListFetch);
-                    } else if (cache === false) {
-                        clearInterval(cacheWaitFileListFetch);
-                        loading.style.color = 'red';
-                        loading.innerText = 'Failed!';
-                        setTimeout(() => {
-                            loading.style.display = 'none';
-                            loading.style.color = 'white';
-                            loading.innerText = 'Loading..';
-                        }, 2000);
-                    }
-                }, 100);
-            } else if (cache) {
-                renderPage(null, cache);
-                preCacheCheck(cache, path);
-            } else {
-                window.fileCache.set(path, true);
-                sendRequest(window.api.method,
-                    window.api.url,
-                    window.api.formatPayload(path),
-                    window.api.headers,
-                    renderPage
-                );
-            }
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            document.title = window.GLOBAL_CONFIG.SITE_NAME;
-            document.querySelector('.site').textContent = window.GLOBAL_CONFIG.SITE_NAME;
-            window.api = {
-                root: '/',
-                url: window.GLOBAL_CONFIG.SCF_GATEWAY,
-                method: 'POST',
-                formatPayload: (path, passwd) => {
-                    return '?path=' + encodeURIComponent(path) +
-                        '&encrypted=' + window.api.accessToken.encrypted +
-                        '&plain=' + window.api.accessToken.plain +
-                        '&passwd=' + passwd;
-                },
-                headers: {
-                    'Content-type': 'application/x-www-form-urlencoded'
-                }
-            }
-            window.backFordwardCache = {
-                root: window.api.root,
-                deepest: window.api.root,
-                current: window.api.root,
-                backable: false,
-                forwardable: false,
-                preview: false
-            }
-            window.fileCache = new Map();
-            const initialPath = new URLSearchParams(window.location.search).get('path') || window.api.root;
-            if (window.GLOBAL_CONFIG.IS_CF) {
-                window.api.accessToken = {
-                    encrypted: '',
-                    plain: ''
-                };
-                fetchFileList(initialPath);
-                addBackForwardListener();
-            } else {
-                sendRequest(window.api.method,
-                    window.api.url + '?accessToken',
-                    null,
-                    window.api.headers,
-                    data => {
-                        const accessToken = JSON.parse(data);
-                        window.api.accessToken = {
-                            encrypted: accessToken.encrypted,
-                            plain: accessToken.plain
-                        };
-                        fetchFileList(initialPath);
-                        addBackForwardListener();
-                    }
-                );
-            }
-        });
-    </script>
 </head>
+<body onLoad="initStatus()">
 
-<body hidden="hidden">
-    <template id="tree-node-wrapper-template">
-        <div class="tree-node-wrapper">
-            <div class="tree-node">
-                <ion-icon></ion-icon>
-                <ion-icon></ion-icon>
-                <div class="tree-node-name"></div>
-            </div>
-        </div>
-    </template>
-    <template id="file-wrapper-templete">
-        <div class="row file-wrapper">
-            <div class="file">
-                <ion-icon></ion-icon>
-                <span class="name"></span>
-                <span class="time"></span>
-                <span class="size"></span>
-            </div>
-        </div>
-    </template>
-    <div class="loading-wrapper">
-        <div class="loading">Loading...</div>
-    </div>
-    <div class="header-wrapper">
-        <div class="header">
-            <ion-icon id="arrow-back" class="logo" name="arrow-back"></ion-icon>
-            <ion-icon id="arrow-forward" class="logo" name="arrow-forward"></ion-icon>
-            <ion-icon id="main-page" class="logo" name="folder"></ion-icon>
-            <div class="nav">
-                <span id="path">
-                </span>
-            </div>
-            <span class="site" id="nav-site">ONEDRIVE</span>
-        </div>
-    </div>
-    <div class="container">
-        <div class="main">
-            <div class="left">
-                <div id="tree-root">
+<!--所有代码逻辑都是在这段js里面做的-->
+<script type="text/javascript">
+    
+    //****************************************************页面初始化部分****************************************************/
+    function initStatus()                    // 初始化设置项状态
+    {
+        onPageInit();        
+        firstBlockInit();
+        displayGUIDAndQUAs();
+        parseBKHT();
+        //qbinitStatus();
+        initBrowserInstallationStatus();
+        initTbsSettings();
+        initPluginEnv();
+		initAreaSetting();
+		displayHideFunction();
+    }
+
+
+    var mm_ua = "Mozilla/5.0 (Linux; Android 6.0.1; MI 4LTE Build/MMB29M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/043706 Mobile Safari/537.36 MicroMessenger/6.5.22.1160 NetType/WIFI Language/zh_CN";
+    var mb_ua = "Mozilla/5.0 (Linux; Android 6.0.1; MI 4LTE Build/MMB29M; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/57.0.2987.132 MQQBrowser/6.2 TBS/043706 Mobile Safari/537.36 V1_AND_SQ_7.3.2_762_YYB_D QQ/7.3.2.3350 NetType/WIFI WebP/0.3.0 Pixel/1080";
+    var qb_ua = "Mozilla/5.0 (Linux; U; Android 6.0.1; zh-cn; MI 4LTE Build/MMB29M) AppleWebKit/537.36 (KHTML, like Gecko)Version/4.0 Chrome/37.0.0.0 MQQBrowser/8.0 Mobile Safari/537.36";
+    var pc_ua = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36";
+    
+    function setUA(){
+        var ua_id = document.getElementById("ua-id");
+        switch(ua_id.selectedIndex){
+            case 1:
+            window.ProxyStatus.setUA(pc_ua);break;
+            case 2:
+            window.ProxyStatus.setUA(mm_ua);break;
+            case 3:
+            window.ProxyStatus.setUA(mb_ua);break;
+            case 4:
+            window.ProxyStatus.setUA(qb_ua);break;
+            case 5:
+            var uastr = document.getElementById("uastr").value;
+            if(uastr=="") return;
+            window.ProxyStatus.setUA(uastr);break;
+            default:
+            return;
+        }
+        alert("UA设置成功");
+    }
+
+    function setMultiProcessType(type)
+    {
+        var e = document.getElementById("multi-process-type");
+        var type = e.selectedIndex;
+        var text = e.options[e.selectedIndex].text;
+        window.ProxyStatus.setMultiProcessType(type);
+        alert(text + "设置成功,请重启生效!");
+        window.ProxyStatus.killX5Process();
+    }
+
+    // Obatin url params
+    function getURLParameter(name) {
+        return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.search) || [null, ''])[1].replace(/\+/g, '%20')) || null;
+    }
+    
+    function clickHidden() {
+        // 每触发一次函数一次计数，十次后调用openDebug
+        if (typeof hiddenClickCount == 'undefined')hiddenClickCount = 0;
+        hiddenClickCount++;
+        if (hiddenClickCount >= 10) {
+            openDebug();
+        }
+        return;
+    }
+
+    function openDebug() {
+        var tab2 = document.getElementById('tab2');
+        tab2.checked = true;
+        location.hash = "#tbs_settings_anchor";
+
+        // Emphasize inspector element
+        var text = document.getElementById('enable_tbs_inspector_text');
+        text.style.fontWeight = 'bold';
+        text.style.color = 'red';
+
+        var ret = confirm("确认打开Inspector调试?");
+        if (ret == true) {
+            // Simulate user's click
+		    var domEnableTbsInspect = document.getElementById("enable_tbs_inspector");
+    		if (!domEnableTbsInspect.checked) {
+    	        domEnableTbsInspect.checked = true;
+    	        var click = document.createEvent("Event");
+		        click.initEvent("click", false /*bubbles*/, true /*cancellable*/);
+                domEnableTbsInspect.dispatchEvent(click);
+	        } else {
+                alert("Inspector调试开关已经打开了!");
+            }
+        }
+    }
+
+    // Page init
+    function onPageInit() {
+        var inspector = getURLParameter('inspector');
+        if (inspector != null) {
+            // Show tab2
+            var tab2 = document.getElementById('tab2');
+            tab2.checked = true;
+            location.hash = "#tbs_settings_anchor";
+
+            // Emphasize inspector element
+            var text = document.getElementById('enable_tbs_inspector_text');
+            text.style.fontWeight = 'bold';
+            text.style.color = 'red';
+
+            if (inspector == 'true') {
+                var ret = confirm("确认打开Inspector调试?");
+                if (ret == true) {
+                    // Simulate user's click
+    		        var domEnableTbsInspect = document.getElementById("enable_tbs_inspector");
+    		        if (!domEnableTbsInspect.checked) {
+    		            domEnableTbsInspect.checked = true;
+    		            var click = document.createEvent("Event");
+    		            click.initEvent("click", false /*bubbles*/, true /*cancellable*/);
+    		            domEnableTbsInspect.dispatchEvent(click);
+    		        } else {
+                        alert("Inspector调试开关已经打开了!");
+                    }
+                }
+            }
+        }
+    }
+
+    function firstBlockInit()
+    {
+        // 通过js2java获取浏览器现存的设置项状态
+        if((typeof(window.ProxyStatus) == "undefined") || (typeof(window.ProxyStatus.getQProxyType) == "undefined"))
+        {
+            alert("功能接口添加失败，请退出重新进入");
+            return;
+        }
+
+        var shouldEncryptedRequestEnabled         =  window.ProxyStatus.getEnablePostEncription();
+        var backendPostEncription             =  window.ProxyStatus.getBackEndPostEncription();
+        
+ 
+        //日志部分功能加载。
+        var isLogEnabled = window.ProxyStatus.isLogRecordEnabled();
+        document.getElementById("logswitcher").value = isLogEnabled? "关闭NetLog并上传" : "开启NetLog记录";
+        var firstTextandScreen = window.ProxyStatus.logFirstTextAndFirstScreen();
+        document.getElementById("id_logFirstTextAndScreen").checked = firstTextandScreen;
+        var beaconlogenable = window.ProxyStatus.getLogBeaconUpload();
+        document.getElementById("id_logBeaconUpload").checked = beaconlogenable;
+        var livelogenable = window.ProxyStatus.isLiveLogEnabled();
+        document.getElementById("id_LiveLogEnabled").checked = livelogenable;
+        var isPerformanceLogEnabled = window.ProxyStatus.isPerformanceLogRecordEnabled();
+        document.getElementById("performancelogswitcher").value = isPerformanceLogEnabled? "性能上报功能关闭并上传" : "性能上报功能开启";
+    }
+
+    
+    //****************************************************Util 部分****************************************************/
+    // 判断是否IP地址
+    function isIPAddress(str)
+    {
+        if (str == null || str == "")
+            return false;
+        var pattern = new RegExp("^((\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5]|[*])\\.){3}(\\d|[1-9]\\d|1\\d\\d|2[0-4]\\d|25[0-5]|[*])$");
+                var patternipv6 = new RegExp("^\s*((([0-9A-Fa-f]{1,4}:){7}(([0-9A-Fa-f]{1,4})|:))|(([0-9A-Fa-f]{1,4}:){6}(:|((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})|(:[0-9A-Fa-f]{1,4})))|(([0-9A-Fa-f]{1,4}:){5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){4}(:[0-9A-Fa-f]{1,4}){0,1}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){3}(:[0-9A-Fa-f]{1,4}){0,2}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:){2}(:[0-9A-Fa-f]{1,4}){0,3}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(([0-9A-Fa-f]{1,4}:)(:[0-9A-Fa-f]{1,4}){0,4}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(:(:[0-9A-Fa-f]{1,4}){0,5}((:((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})?)|((:[0-9A-Fa-f]{1,4}){1,2})))|(((25[0-5]|2[0-4]\d|[01]?\d{1,2})(\.(25[0-5]|2[0-4]\d|[01]?\d{1,2})){3})))(%.+)?\s*$");
+            //      alert("isipv6:"+str+"result:"+str.match(patternipv6));
+        return str.match(pattern)|| str.match(patternipv6);
+    }
+
+    var tipsTimeoutId = 0;                    // tips显示几秒后消失，需要定时器实现
+    var opacityInterval = 0;                // 透明度渐隐的timer
+    function resultTips(tips, delayTime)
+    {
+        alert(tips);
+        /*
+        var tipsElementId        = "resultTips";
+        var tipsBackElementId    = "tipsBack";
+        var styleOpacity = 1;
+        document.getElementById(tipsBackElementId).style.display = "block";  // 显示提示标签
+        if (tipsTimeoutId != 0)                // 以前也有该timeout，要取消它
+        {
+            clearTimeout(tipsTimeoutId);
+            tipsTimeoutId = 0;
+        }
+        if (opacityInterval != 0)            // 渐隐的timer不能存在多个
+        {
+            clearInterval(opacityInterval);
+            opacityInterval = 0;
+        }
+        document.getElementById(tipsElementId).innerHTML = "&nbsp;&nbsp;"+tips+"&nbsp;&nbsp;";         // 弹出提示
+        document.getElementById(tipsBackElementId).style.opacity = styleOpacity; // 设置可见度
+
+        // 定时消隐
+        tipsTimeoutId = setTimeout(
+                function()
+                {
+                    tipsTimeoutId = 0;
+                    // 提示文字有渐隐的功能
+                    opacityInterval = setInterval(
+                    function()
+                    {
+                        styleOpacity -= 0.2;
+                        if (styleOpacity < 0)
+                        {    // 取消该interval
+                            clearInterval(opacityInterval);
+                            opacityInterval = 0;
+                            document.getElementById(tipsBackElementId).style.display = "none";
+                            return;
+                        }
+                        document.getElementById(tipsBackElementId).style.opacity = styleOpacity;
+                    }, 50); // 定时消隐
+                }, delayTime);
+        */
+    } 
+
+                    
+
+    //****************************************************显示GUID/QUA/QIME部分****************************************************/
+    function displayGUIDAndQUAs()
+    {
+        document.getElementById("guid_id").innerHTML= "<p>" + window.ProxyStatus.getGUID() + "</p>";
+        document.getElementById("qua2_id").innerHTML= "<p>" + window.ProxyStatus.getQUA2() + "</p>";
+        document.getElementById("qimei_id").innerHTML= "<p>" + window.ProxyStatus.getQIMEI() + "</p>";
+    }
+    
+    //****************************************************清除Cookie 缓存，广告部分。****************************************************/
+    function clearCookieAndCache()
+    {
+        var cookiechecked = document.getElementById("id_clearcookie").checked;
+        var filecachechecked = document.getElementById("id_clearfilecache").checked;
+        var dnscachechecked = document.getElementById("id_cleardns").checked;
+        
+        var clearItems = (cookiechecked ? 1: 0)  + ( filecachechecked ? 2 : 0 ) + (dnscachechecked ? 8 :0) ;
+        if(clearItems == 0)
+        {
+            resultTips("请选择需要被清除的选项。", 1000);
+            return ;
+        }
+
+        window.ProxyStatus.clearCookieAndCache(clearItems);
+        resultTips((cookiechecked ? "[Cookie] ":"") + (filecachechecked ? "[文件缓存] ":"") + (dnscachechecked ? "[DNS缓存]" :"")
+                + "被清空。" , 1000);
+
+        document.getElementById("id_clearcookie").checked = false;
+        document.getElementById("id_clearfilecache").checked = false;
+        document.getElementById("id_cleardns").checked = false;
+    }
+
+    function parseBKHT()
+    {
+        var address = window.ProxyStatus.loadBKHT();    
+        if (address == null || address == "" || address.length < 9)
+        {
+            return;
+        }
+        var bkht =  document.getElementById("set_bkht");
+        bkht.value = address;
+    }
+
+    //******************************************日志上传部分功能处理***************************************************************/
+    function setlogFirstTextAndScreen(enable)
+    {
+        window.ProxyStatus.setLogFirstTextAndFirstScreen(enable);
+        resultTips("首字首屏日志已"+(enable == true ? "开启":"关闭"), 1000);
+    }
+
+    function setlogBeaconUpload(enable)
+    {
+        window.ProxyStatus.setLogBeaconUpload(enable);
+        resultTips("灯塔日志已"+(enable == true ? "开启":"关闭"), 1000);
+    }
+    function setLiveLogEnabled(enable) {
+        window.ProxyStatus.setLiveLogEnabled(enable);
+        resultTips("LiveLog 已"+(enable == true ? "开启":"关闭"), 1000);
+    }
+    function switchLogUpload()
+    {    
+        var logbutton = document.getElementById("logswitcher");
+        var btnText = logbutton.value;
+    
+        if(btnText == "开启NetLog记录")
+        {
+            window.ProxyStatus.openLogRecord();
+            alert("日志功能开启成功，请访问页面录制。");
+            logbutton.value = "关闭NetLog并上传"
+        }
+
+        if(btnText == "关闭NetLog并上传")
+        {
+            window.ProxyStatus.closeAndUploadLogRecord();
+            logbutton.value = "开启NetLog记录"
+        }
+    }
+    function uploadLiveLog()
+    {
+        window.ProxyStatus.uploadLiveLogRecord();
+        alert("日志上传成功");
+    }
+    function switchPerformanceLogUpload()
+    {    
+        var logbutton = document.getElementById("performancelogswitcher");
+        var btnText = logbutton.value;
+    
+        if(btnText == "性能上报功能开启")
+        {
+            window.ProxyStatus.setPerformanceLogFlag(true);
+            alert("性能上报功能开启成功，请访问需要上报的页面。");
+            logbutton.value = "性能上报功能关闭并上传"
+        }
+
+        if(btnText == "性能上报功能关闭并上传")
+        {
+            window.ProxyStatus.setPerformanceLogFlag(false);
+            logbutton.value = "性能上报功能开启"
+        }
+    }
+
+    //**************************************************************************************************************************/
+    
+    //**********************************************广告过滤地址设置**************************************************************/
+
+    function initBrowserInstallationStatus()
+    {
+        var browser_installation_status = document.getElementById('browser_installation_status');
+        var status = window.ProxyStatus.getBrowserInstallationStatus();
+        var bs = Boolean(status);
+        browser_installation_status.checked = bs;
+    }
+	
+	
+	function initAreaSetting()
+    {
+		var type = window.ProxyStatus.getAreaType();
+		if (type == 1)
+		{
+			document.getElementById("qb_select_erea_guangdong").checked = true;
+		}
+		else if (type == 2)
+		{
+			document.getElementById("qb_select_erea_not_guangdong").checked = true;
+		}
+		else
+		{
+			document.getElementById("qb_select_erea_auto").checked = true;
+		}
+    }
+
+    function switchBrowserInstallationStatus(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setBrowserInstallationStatus(status);
+        alert("浏览器伪装设置成功,请重启生效!");
+    }
+
+    function switchTbsInspectorStatus(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setIsInspectorEnabled(status);
+        alert("Inspector选项设置成功,请重启生效!");
+        window.ProxyStatus.killX5Process();
+    }
+        
+    function switchTbsX5jscoreInspectorStatus(enable) 
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setIsX5jscoreInspectorEnabled(status);
+        alert("X5jscore Inspector选项设置成功,请重启生效!!");
+        window.ProxyStatus.killX5Process();
+    }
+
+    function switchTbsX5ContentCacheStatus(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setIsX5ContentCacheDisabled(status);
+        alert("X5 Content Cache选项设置成功,请重启生效!");
+        window.ProxyStatus.killX5Process();
+    }
+
+    function switchTbsX5PrerenderStatus(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setIsX5PrerenderDisabled(status);
+        alert("X5 预读预渲染选项设置成功,请重启生效!");
+        window.ProxyStatus.killX5Process();
+    }
+
+    function switchTbsX5ContentCacheLogStatus(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setIsX5ContentCacheLogEnabled(status);
+        alert("X5 Content Cache日志设置成功,请重启生效!");
+        window.ProxyStatus.killX5Process();
+    }
+
+    function switchvConsoleInspectorStatus(enable) 
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setEnablevConsole(status);
+        if (status == true) alert("vconsole已生效");
+    }
+
+    function switchTbsX5CustomFontStatus(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setIsX5CustomFontDisabled(status);
+        alert("X5 Custom Font选项设置成功,请重启生效!");
+        window.ProxyStatus.killX5Process();
+    }
+
+    function switchTbsX5EmbeddedWidgetForVideo(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setIsX5EmbeddedWidgetForVideoDisabled(status);
+        alert("同层渲染框架视频通路 选项设置成功,请重启生效!");
+        window.ProxyStatus.killX5Process();
+    }
+
+    function switchEnableKingCard(enable)
+    {
+        var status = Boolean(enable);
+        window.ProxyStatus.setKingCardEnable(status);
+        alert("KingCard选项设置成功!");
+    }
+
+	function switchSlectAuto(enable)
+    {
+		document.getElementById("qb_select_erea_guangdong").checked = false;
+		document.getElementById("qb_select_erea_not_guangdong").checked = false;
+        window.ProxyStatus.setQbDispatchAuto();
+        alert("选择了自动模式,立刻生效!");
+    }
+	
+	function switchSlectGuangdong(enable)
+    {
+		document.getElementById("qb_select_erea_auto").checked = false;
+		document.getElementById("qb_select_erea_not_guangdong").checked = false;
+        window.ProxyStatus.setQbDispatchGuangDong();
+        alert("选择了广东区域,立刻生效!");
+    }
+	function switchSlectNotGuangdong(enable)
+    {
+		document.getElementById("qb_select_erea_auto").checked = false;
+		document.getElementById("qb_select_erea_guangdong").checked = false;
+        window.ProxyStatus.setQbDispatchNotGuangDong();
+        alert("选择了非广东区域,立刻生效!");
+    }
+
+	function displayHideFunction(){
+	    if(!window.ProxyStatus.getShouldDisplayHideFunction()){
+	         return;
+	    }
+	    var tab3_element = document.getElementById('label3');
+        tab3_element.style.display = "block";
+        var tab5_element = document.getElementById('label5');
+        tab5_element.style.display = "block";
+        var tab3_element = document.getElementById('label6');
+        tab3_element.style.display = "block";
+        document.getElementById('set_tbs_core_version').value="";
+        window.scrollTo(0,0);
+	}
+	
+    function submit_tbs_core_version()
+    {
+        var tmp_element = document.getElementById('set_tbs_core_version');
+        var version = String(tmp_element.value.trim());
+        console.log("submit_tbs_core_version -- " + version);
+        if( version == 20171022)
+        {
+            window.ProxyStatus.setShouldDisplayHideFunction(true);
+            displayHideFunction();
+            alert("you get what you want!");
+        } else{
+            window.ProxyStatus.setTbsCoreVersion(version);
+            alert("TBS内核版本号("　+　version　+　")设置成功,請重启生效!");
+        }
+
+    }
+    
+    function killToolsmpProcess(){
+    	 window.ProxyStatus.tryKillToolsmpProcess();
+    	 alert("发送成功！");
+    }
+
+    //-------------------------------------WUP DEBUG CODE By GeekLan--------------------------------
+    function submit_tbs_wup_proxy_url() {
+        var tmp_element = document.getElementById('tbs_wup_proxy_url');
+        var url = String(tmp_element.value.trim());        
+        console.log("submit_tbs_wup_proxy_url -- " + url);
+        window.ProxyStatus.setWupProxyUrl(url);
+        if (url == "") {
+            alert("WUP proxy地址清除成功!");
+        } else {
+            alert("WUP proxy地址设置成功,将立即生效!");
+        }
+        check_wup_environment_type();
+    }
+
+    function clear_tbs_wup_proxy_url() {
+        var wup_url_element = document.getElementById('tbs_wup_proxy_url');
+        wup_url_element.value = "";
+    }
+
+	function set_tbs_default_wup_proxy() {
+	}
+
+    function init_tbs_wup_proxy_url() {
+        var url = window.ProxyStatus.getWupProxyUrl();
+        tmp_element = document.getElementById('tbs_wup_proxy_url');
+        tmp_element.value = "" + url;
+    }
+
+    function get_wup_preference_info_by_force() {
+        window.ProxyStatus.sendWupPreferenceRequestByForce();
+        check_wup_environment_type();
+    }
+
+    function get_wup_switch_info() {
+        window.ProxyStatus.setWupSwitchInfo();
+    }
+
+    function get_wup_iplist_info_by_force() {
+        window.ProxyStatus.sendWupIpListRequestByForce();
+    }
+
+    function get_wup_domain_info_by_force() {
+         window.ProxyStatus.sendWupDomainRequestByForce();
+    }
+
+
+    function get_wup_white_list_info() {
+        window.ProxyStatus.getWupWhiteListInfo();
+    }
+
+    function check_wup_environment_type() {
+        var env_type =  window.ProxyStatus.getEnvironmentType();
+        var wup_current_env_ele  = document.getElementById('wup_current_env');
+        wup_current_env_ele.innerHTML = "" + env_type;
+    }
+    //-------------------------------------WUP DEBUG CODE By GeekLan--------------------------------
+
+    function initTbsSettings() 
+    {
+        var tab2 = document.getElementById('tab2');
+        //tab2.onclick();
+        tab2.style.checked = true;
+    
+        // tbs core version 
+        var core_ver = window.ProxyStatus.getTbsCoreVersion();
+        var core_build_no = window.ProxyStatus.getTbsCoreBuildNumber();
+        var tmp_element = document.getElementById('tbs_core_version');
+        tmp_element.innerHTML = "" + core_ver + " (" + core_build_no + ")";
+
+        // tbs sdk version
+        var sdk_ver = window.ProxyStatus.getTbsSdkVersion();
+        tmp_element = document.getElementById('tbs_sdk_version');
+        tmp_element.innerHTML = "" + sdk_ver;
+
+        // multi process enabled
+        var multi_process_type = window.ProxyStatus.getMultiProcessType();
+        tmp_element = document.getElementById('multi-process-type');
+        tmp_element.selectedIndex = multi_process_type;
+
+        // tbs inspector enable
+        var inspector_enabled = window.ProxyStatus.getIsInspectorEnabled();
+        tmp_element = document.getElementById('enable_tbs_inspector');
+        tmp_element.checked = Boolean(inspector_enabled);
+
+        // tbs x5jscore inspector enable
+        var x5jscore_inspector_enabled = window.ProxyStatus.getIsX5jscoreInspectorEnabled();
+        tmp_element = document.getElementById('enable_tbs_x5jscore_inspector');
+        tmp_element.checked = Boolean(x5jscore_inspector_enabled);    
+
+        //tbs x5 content cache disable
+        var x5_content_cache_disabled = window.ProxyStatus.getIsX5ContentCacheDisabled();
+        tmp_element = document.getElementById("disable_tbs_content_cache");
+        tmp_element.checked = Boolean(x5_content_cache_disabled);
+
+        //tbs x5 prerender disable
+        var x5_prerender_disabled = window.ProxyStatus.getIsX5PrerenderDisabled();
+        tmp_element = document.getElementById("disable_tbs_prerender");
+        tmp_element.checked = Boolean(x5_prerender_disabled);
+
+        //tbs x5 plz disable
+        var x5_content_cache_log_enable = window.ProxyStatus.getIsX5ContentCacheLogEnabled();
+        tmp_element = document.getElementById("enable_x5_content_cache_log");
+        tmp_element.checked = Boolean(x5_content_cache_log_enable);
+
+        //vconsole
+        var x5jscore_vconsole_enabled = window.ProxyStatus.getEnablevConsole();
+        tmp_element = document.getElementById('enable_tbs_vconsole_inspector');
+        tmp_element.checked = Boolean(x5jscore_vconsole_enabled);  
+
+        //tbs x5 custom font disable
+        var x5_custom_font_disabled = window.ProxyStatus.getIsX5CustomFontDisabled();
+        tmp_element = document.getElementById("disable_tbs_custom_font");
+        tmp_element.checked = Boolean(x5_custom_font_disabled);
+
+        //tbs x5 embedded widget for video disable
+        var x5_embedded_widget_for_video_disabled = window.ProxyStatus.getIsX5EmbeddedWidgetForVideoDisabled();
+        tmp_element = document.getElementById("disable_embedded_widget_for_video");
+        tmp_element.checked = Boolean(x5_embedded_widget_for_video_disabled);
+
+        //kingcard
+        var x5_enable_kingcard = window.ProxyStatus.getIsKingCardEnable();
+        tmp_element = document.getElementById("enable_king_card");
+        tmp_element.checked = Boolean(x5_enable_kingcard);
+
+        //----Render Debug Tools Start----
+        var tmp_status = false;
+        tmp_status = window.ProxyStatus.getEnableDebugBorders();
+        tmp_element = document.getElementById("render_debug_debug_borders");
+        tmp_element.checked = Boolean(tmp_status);
+
+        tmp_status = window.ProxyStatus.getEnableInfoPanel();
+        tmp_element = document.getElementById("render_info_panel");
+        tmp_element.checked = Boolean(tmp_status);
+
+        tmp_status = window.ProxyStatus.getEnableDebugInfoPanel();
+        tmp_element = document.getElementById("render_debug_info_panel");
+        tmp_element.checked = Boolean(tmp_status);
+
+        tmp_status = window.ProxyStatus.getEnableFirstScreenInfo();
+        tmp_element = document.getElementById("render_debug_first_screen_info");
+        tmp_element.checked = Boolean(tmp_status);
+
+        tmp_status = window.ProxyStatus.getEnableFpsMeter();
+        tmp_element = document.getElementById("render_debug_fps_meter");
+        tmp_element.checked = Boolean(tmp_status);
+
+        tmp_status = window.ProxyStatus.getEnableCpuRaster();
+        tmp_element = document.getElementById("render_debug_cpu_raster");
+        tmp_element.checked = Boolean(tmp_status);
+
+        tmp_status = window.ProxyStatus.getEnableSWDraw();
+        tmp_element = document.getElementById("render_debug_sw_draw");
+        tmp_element.checked = Boolean(tmp_status);
+
+        tmp_status = window.ProxyStatus.getDisableRenderAdFilter();
+        tmp_element = document.getElementById("render_debug_ad_filter");
+        tmp_element.checked = Boolean(tmp_status);
+        //----Render Debug Tools End----
+
+        init_tbs_wup_proxy_url();
+        check_wup_environment_type();
+    }
+
+    function initPluginEnv()
+    {
+   		var is_test_plugin_env = document.getElementById('is_test_plugin_env');
+        var status = window.ProxyStatus.isPluginDebugEnv();
+        var bs = Boolean(status);
+        is_test_plugin_env.checked = bs;
+    }
+    
+    <!-- 原来的QBDebug页面的JS逻辑代码。-->
+
+    // 以下为各开关项的标签Id
+    var x5ProxyElementId        = "x5Proxy";
+    var x5QHeadElementId        = "x5QHead";
+    var webPSupportElementId    = "supportWebP";
+    // var logCatLogElementId        = "logCatLog";
+    var imageQualityName        = "ImageQuality";
+    var packResourceId            = "packResource";
+    var packResourceWifiId        = "packResourceWifi";
+    //是否显示内存值
+    var x5ShowMemValueId        = "showMemValue";
+    
+    //预链接
+    var usePreConnection        = "usePreConn";
+    //Flash相关
+    var flashFullScreenId       = "flashFullScreen";
+    //硬件加速
+    var hardwareAcceleratedId   = "hardwareAccelerated";
+    //阅读模式
+    var supportReadModeElementId= "supportReadMode";
+    //代理请求加密
+    var shouldEncryptedRequestElementId = "shouldEncryptedRequest";
+    //首字首屏日志
+    var logFirstTextAndFirstScreenId = "logFirstTextAndFirstScreen";
+    
+    var RenderTileId   = "renderTileId";
+    var RenderTimeId   = "renderTimeId";
+    var RenderMemoryId   = "renderMemoryId";
+    var RenderTestingLogId   = "renderTestingLogId";
+    
+    function qbinitStatus()                    // 初始化设置项状态
+    {
+        // 通过js2java获取浏览器现存的设置项状态
+        var x5ProxyEnabled        = window.tbsdebug.qbdebug().isX5ProxyEnabled();
+        var x5QHeadEnabled        = window.tbsdebug.qbdebug().isX5QHeadEnabled();
+        var usePreConnEnabled    = window.tbsdebug.qbdebug().isX5PreConnEnabled();
+        var webPSupportEnabled    = window.tbsdebug.qbdebug().isSupportWebP();
+        var packResourceEnabled    = window.tbsdebug.qbdebug().getPackResource();
+        var packResourceWifiEnabled    = window.tbsdebug.qbdebug().getPackResourceWifi();
+        //是否显示内存值
+        var x5ShowMemValueEnabled    = window.tbsdebug.qbdebug().getX5ShowMemValue();
+        var supportReadModeEnabled  = window.tbsdebug.qbdebug().getSupportReadMode();
+        var shouldEncryptedRequestEnabled = window.tbsdebug.qbdebug().getShouldEncryptedRequest();
+        var logFirstTextAndFirstScreenEnabled = window.tbsdebug.qbdebug().getLogFirstTextAndFirstScreen();
+        var imageQuality        = window.tbsdebug.qbdebug().getImageQuality();
+        
+        //Flash相关
+        var flashFullScreenEnabled    = window.tbsdebug.qbdebug().isFlashFullScreen();
+        //硬件加速
+        var hardwareAccelerated = window.tbsdebug.qbdebug().getHardwareAccelerated();
+        
+        //渲染调试
+        var rendertiledebug    = window.tbsdebug.qbdebug().getX5RenderTileDebug();    
+        var renderperformdebug    = window.tbsdebug.qbdebug().getX5RenderMemoryDebug();
+        var rendermemorydebug    = window.tbsdebug.qbdebug().getX5RenderPerformDebug();    
+        var rendertestinglogdebug    = window.tbsdebug.qbdebug().getX5RenderTestingLogDebug();    
+                        
+        // 初始化设置项状态
+        document.getElementById(x5ProxyElementId).checked        = x5ProxyEnabled;
+        document.getElementById(x5QHeadElementId).checked        = x5QHeadEnabled;
+        document.getElementById(usePreConnection).checked        = usePreConnEnabled;
+        // document.getElementById(logCatLogElementId).checked        = logCatLogEnabled;
+        document.getElementById(webPSupportElementId).checked    = webPSupportEnabled;
+        document.getElementById(packResourceId).checked            = packResourceEnabled;
+        document.getElementById(packResourceWifiId).checked        = packResourceWifiEnabled;
+        //是否显示内存值
+        document.getElementById(x5ShowMemValueId).checked        = x5ShowMemValueEnabled;
+        document.getElementById(supportReadModeElementId).checked        = supportReadModeEnabled;
+        document.getElementById(shouldEncryptedRequestElementId).checked        = shouldEncryptedRequestEnabled;
+        document.getElementById(logFirstTextAndFirstScreenId).checked        = logFirstTextAndFirstScreenEnabled;
+        // 如果getElementsByName返回的数组不是7个，那代码就有bug
+        if (imageQuality >= -1 && imageQuality <= 6)
+            document.getElementsByName(imageQualityName)[imageQuality+1].checked = true;
+        
+        //Flash相关
+        document.getElementById(flashFullScreenId).checked        = flashFullScreenEnabled;
+        //硬件加速
+        if(hardwareAccelerated)
+            document.getElementById(hardwareAcceleratedId).value = "当前使用硬件绘制";
+
+        document.getElementById(RenderTileId).checked        = rendertiledebug;
+        document.getElementById(RenderTimeId).checked        = renderperformdebug;
+        document.getElementById(RenderMemoryId).checked        = rendermemorydebug;
+        document.getElementById(RenderTestingLogId).checked        = rendertestinglogdebug;
+    }
+    
+    function enableFileAndVideoSwitches()
+    {
+        window.ProxyStatus.enableFileAndVideoSwitches();
+        resultTips("打开文件/视频开关成功,退出TBS进程后，所有开关还原成线上配置值", 2000);
+    }
+
+	function switchPluginDebugEnv(debug)
+	{
+		var status = Boolean(debug);
+		window.ProxyStatus.switchPluginDebugEnv(status);
+    	resultTips("切换plugin测试环境", 2000);
+	}
+    
+    function getLocalPluginInfo()
+    {
+        window.ProxyStatus.getLocalPluginInfo();
+         resultTips("已上传本地插件列表信息" , 1000);
+    }
+
+    function getPluginForce()
+    {
+        window.ProxyStatus.getPluginForce();
+        resultTips("请求拉取插件列表已发送" , 2000);
+    }
+
+    function cleanPlugins()
+    {
+       window.ProxyStatus.cleanPlugins();
+    }
+
+    //----Render Debug Tools Start----
+    function setEnableDebugBorders(enable)
+    {
+       //打开内核网格线
+       var status = Boolean(enable);
+       window.ProxyStatus.setEnableDebugBorders(status);
+    }
+
+    function setEnableInfoPanel(enable)
+    {
+       //打开内核信息面板
+       var status = Boolean(enable);
+       window.ProxyStatus.setEnableInfoPanel(status);
+    }
+
+    function setEnableDebugInfoPanel(enable)
+    {
+       //打开内核调试信息面板
+       var status = Boolean(enable);
+       window.ProxyStatus.setEnableDebugInfoPanel(status);
+    }
+
+    function setEnableFirstScreenInfo(disable)
+    {
+       //显示首屏信息
+       var status = Boolean(disable);
+       window.ProxyStatus.setEnableFirstScreenInfo(status);
+    }
+
+    function setEnableFpsMeter(enable)
+    {
+       //打开Fps Meter
+       var status = Boolean(enable);
+       window.ProxyStatus.setEnableFpsMeter(status);
+    }
+
+    function setEnableCpuRaster(enable)
+    {
+       //强制CPU Raster
+       var status = Boolean(enable);
+       window.ProxyStatus.setEnableCpuRaster(status);
+    }
+
+    function setEnableSWDraw(enable)
+    {
+       //强制走软绘
+       var status = Boolean(enable);
+       window.ProxyStatus.setEnableSWDraw(status);
+    }
+
+    function setDisableRenderAdFilter(disable)
+    {
+       //关闭渲染广告过滤（新窗口生效）
+       var status = Boolean(disable);
+       window.ProxyStatus.setDisableRenderAdFilter(status);
+    }
+
+    function setEnableKeyLog(enable)
+    {
+       //记录渲染关键日志
+       var status = Boolean(enable);
+       window.ProxyStatus.setEnableKeyLog(status);
+       resultTips("设置成功", 1000);
+    }
+
+    function setEnableClearFrameBufferForStart()
+    {
+       //绘制前clearColor
+       var status = Boolean(document.getElementById('render_debug_clear_framebuffer_start').checked);
+       var color = parseInt(document.getElementById('render_debug_clear_color_start').value);
+       var x = parseInt(document.getElementById('render_debug_clear_x_start').value);
+       var y = parseInt(document.getElementById('render_debug_clear_y_start').value);
+       var width = parseInt(document.getElementById('render_debug_clear_width_start').value);
+       var height = parseInt(document.getElementById('render_debug_clear_height_start').value);
+       window.ProxyStatus.setEnableClearFrameBufferForStart(status, color, x, y, width, height);
+       resultTips("设置成功", 1000);
+    }
+
+    function setEnableClearFrameBufferForEnd()
+    {
+       //绘制后clearColor
+       var status = Boolean(document.getElementById('render_debug_clear_framebuffer_end').checked);
+       var color = parseInt(document.getElementById('render_debug_clear_color_end').value);
+       var x = parseInt(document.getElementById('render_debug_clear_x_end').value);
+       var y = parseInt(document.getElementById('render_debug_clear_y_end').value);
+       var width = parseInt(document.getElementById('render_debug_clear_width_end').value);
+       var height = parseInt(document.getElementById('render_debug_clear_height_end').value);
+       window.ProxyStatus.setEnableClearFrameBufferForEnd(status, color, x, y, width, height);
+       resultTips("设置成功", 1000);
+    }
+
+    function startRenderLog()
+    {
+        // stoptype, openurl, timeout, showguidetime, maincount, implcount, startmark
+        var startmark = -1;
+        var stoptype = 1;
+        var radios = document.getElementsByName("render-log-stoptype");
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked == true){
+                stoptype = parseInt(radios[i].value);
+            }
+        }
+        var timeout = parseInt(document.getElementById('render-log-timeout').value);
+        var showguidetime = parseInt(document.getElementById('render-log-showguidetime').value);
+        var maincount = parseInt(document.getElementById('render-log-maincount').value);
+        var implcount = parseInt(document.getElementById('render-log-implcount').value);
+        var openurl = document.getElementById('render-log-url').value;
+        window.ProxyStatus.startRenderLog(stoptype, timeout, showguidetime, maincount, implcount, startmark, openurl);
+        resultTips("设置成功", 1000);
+    }
+
+    function checkAuth(e)
+    {
+        // window.ProxyStatus.checkAuth()
+        
+        var pwd = document.getElementById("input_password_" + e);
+        // if (window.ProxyStatus.checkDebugX5Auth(pwd.value)) {
+        if (pwd.value = "114514") {
+            document.getElementById("auth-check-block-2").style.display = "none"
+            document.getElementById("auth-check-block-3").style.display = "none"
+            document.getElementById("tab-container2").style.display = ""
+            document.getElementById("tab-container3").style.display = ""
+        }
+
+    }
+    //----Render Debug Tools End----
+
+</script>
+
+<div class="container">
+    <div class="main">
+        <ul class="tabs">
+            <li>
+                <input type="radio" style="position:absolute;top:-9999px;left:-9999px" checked
+                       name="tabs" id="tab1">
+
+
+                <label for="tab1">日志&信息</label>
+                <div id="tab-content1" class="tab-content animated fadeIn">
+                    <table class="borderRadius" bgcolor="#FFFFFF" width="100%" cellspacing="0"
+                           bordercolor="#AAABA0" style="font-size:15px">
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>
+                                <br>
+                                <div onclick="clickHidden()">日志功能：</div>
+                                <input id="logswitcher" type="submit" name="namedelip"
+                                       value="开启Netlog" onclick="switchLogUpload()"/>&nbsp;
+                                <input id="liveloguploader" type="submit" name=namedelip
+                                       value="上传LiveLog日志" onclick="uploadLiveLog()"/>&nbsp;
+                                <br>                    
+                                <input id="id_logFirstTextAndScreen" alt="开启首字首屏日志" type="checkbox"
+                                       name="开启首字首屏日志"
+                                       onclick="setlogFirstTextAndScreen(this.checked)"/>开启首字首屏日志
+                                <br>
+                                <input id="id_logBeaconUpload" alt="灯塔日志开关" type="checkbox"
+                                       name="灯塔日志开关" onclick="setlogBeaconUpload(this.checked)"/>灯塔日志开关
+                                <br>
+
+                                <input id="id_LiveLogEnabled" alt="开启Livelog日志" type="checkbox"
+                                       name="开启Livelog日志" onclick="setLiveLogEnabled(this.checked)"/>开启Livelog日志
+                                <br>
+
+                                性能上报功能：<br>
+                                <input id="performancelogswitcher" type="submit" name="namedelip"
+                                       value="性能上报功能开启" onclick="switchPerformanceLogUpload()"/>&nbsp;
+                                <br> <br>
+                                
+                            </td>
+                        </tr>
+                    </table>
+
+                    <br>
+                    <table class="borderRadius" bgcolor="#FFFFFF" width="100%" cellspacing="0"
+                           bordercolor="#AAABA0" style="font-size:15px">
+                        <tr>
+                            <td>&nbsp;</td>
+
+                            <td>
+                                <br>
+                                <input id="id_clearcookie" alt="" type="checkbox" name="Cookie"/>Cookie
+                                <br>
+                                <input id="id_clearfilecache" alt="" type="checkbox" name="文件缓存"/>文件缓存
+                                <br>
+                                <input id="id_cleardns" alt="" type="checkbox" name="dnscache"/>DNS缓存
+                                <br>
+                                <br>
+                            </td>
+                            <td>
+                                <input id="" type="submit" name="nameapplyip" value="清除"
+                                       onclick="clearCookieAndCache()"/>
+                            </td>
+                        </tr>
+                    </table>
+                    &nbsp;基本信息
+                    <br>
+                    <table class="borderRadius" style="table-layout:fixed;font-size:12px"
+                           bgcolor="#FFFFFF" width="100%" cellspacing="5" bordercolor="#AAABA0">
+                        <tr>
+                            <td>TBS内核版本号:
+                                <div id="tbs_core_version"
+                                     style="display:inline;word-wrap;break-word;">null
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <hr>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>TBS包装层版本号:
+                                <div id="tbs_sdk_version"
+                                     style="display:inline;word-wrap;break-word;">null
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <hr>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>GUID:</td>
+                        </tr>
+
+                        <tr>
+                            <td id="guid_id">null</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <hr>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>QUA2:</td>
+
+                        </tr>
+                        <tr>
+                            <td id="qua2_id" style="word-wrap:break-word">null</td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <hr>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>QIMEI:</td>
+
+                        </tr>
+                        <tr>
+                            <td id="qimei_id" style="word-wrap:break-word">null</td>
+                        </tr>
+
+
+                    </table>
+
+
                 </div>
-            </div>
-            <div class="right">
-                <div class="list-header">
-                    <div class="row">
-                        <div class="file">
-                            <span class="name">ITEMS</span>
-                            <span class="time">TIME</span>
-                            <span class="size">SIZE</span>
+            </li>
+
+            <li>
+                <input type="radio" style="position:absolute;top:-9999px;left:-9999px" name="tabs"
+                       id="tab2">
+                <label for="tab2">调试</label>
+
+                
+                <div id="tab-content2" class="tab-content animated fadeIn">
+                    <div id="auth-check-block-2">
+                        <br>
+                        请输入验证码：
+                        <br>
+                        <input type="text" id="input_password_2" value=""
+                               style="height: 26px; font-size: 13px; width: 100%; ">
+                        <br>
+                        <br>
+                        <input type="button" onclick="checkAuth(2)" value="提  交"
+                               style=" height: 26px; font-size: 13px; ">
+                        </tr>
+                    </div>
+                    <div id="tab-container2" style="display: none">
+                    
+                        <span id="tbs_settings_anchor"></span>
+                        <br>
+                        &nbsp;TBS settings
+                        <br>
+                        <table id="tbs_settings" class="borderRadius" bgcolor="#FFFFFF" width="100%"
+                            cellspacing="2" bordercolor="#AAABA0" style="font-size:13px">
+    
+                            <tr>
+                                <td>
+                                    <input id="browser_installation_status" type="checkbox"
+                                        name="namesSwitchBrowserInstallationStatus"
+                                        value="判定为未安装QQ浏览器"
+                                        onclick="switchBrowserInstallationStatus(this.checked)"/>
+                                    <div style="display:inline">忽略是否安装完整版QB</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <select id="multi-process-type">
+                                        <option value=0>禁用多进程</option>
+                                        <option value=1>启用 privileged 进程</option>
+                                        <option value=2>启用从 FD 加载的 privileged 进程</option>
+                                        <option value=3>启用 isolated 进程</option>
+                                    </select>
+                                    <input type="button" onclick="setMultiProcessType()"
+                                        value="提交" style=" height: 26px; font-size: 13px; ">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="enable_tbs_inspector" type="checkbox"
+                                        name="namesEnableTbsInspector"
+                                        value="是否打开Inspector功能"
+                                        onclick="switchTbsInspectorStatus(this.checked)"/>
+                                    <div id="enable_tbs_inspector_text" style="display:inline;">
+                                        打开TBS内核Inspector调试功能
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="enable_tbs_x5jscore_inspector" type="checkbox"
+                                        name="namesEnableTbsX5jscoreInspector"
+                                        value="是否打开X5jscore Inspector功能"
+                                        onclick="switchTbsX5jscoreInspectorStatus(this.checked)"/>
+                                    <div id="enable_tbs_x5jscore_inspector_text" style="display:inline;">
+                                        打开TBS内核X5jscore Inspector调试功能
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="enable_tbs_vconsole_inspector" type="checkbox"
+                                        name="namesEnableTbsvConsoleInspector"
+                                        value="是否打开vConsole"
+                                        onclick="switchvConsoleInspectorStatus(this.checked)"/>
+                                    <div id="enable_tbs_vconsole_text" style="display:inline;">
+                                        打开vConsole调试功能
+                                    </div>
+                                
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="disable_tbs_content_cache" type="checkbox"
+                                        name="namesDisableTbsX5Contentcache"
+                                        value="是否关闭X5Contentcache功能"
+                                        onclick="switchTbsX5ContentCacheStatus(this.checked)"/>
+                                    <div id="disable_tbs_x5Contentcache_text" style="display:inline;">
+                                        关闭X5内核Content Cache功能
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="disable_tbs_prerender" type="checkbox"
+                                        name="namesDisableTbsX5Prerender"
+                                        value="是否关闭预读预渲染功能"
+                                        onclick="switchTbsX5PrerenderStatus(this.checked)"/>
+                                    <div id="disable_tbs_x5Prerender_text" style="display:inline;">
+                                        关闭X5内核预读预渲染功能
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="enable_x5_content_cache_log" type="checkbox"
+                                        name="namesEnableTbsX5ContentcacheLog"
+                                        value="是否开启X5Contentcache日志"
+                                        onclick="switchTbsX5ContentCacheLogStatus(this.checked)"/>
+                                    <div id="disable_tbs_x5plz_text" style="display:inline;">
+                                        开启X5内核Content Cache日志
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="disable_tbs_custom_font" type="checkbox"
+                                        name="namesDisableTbsX5CustomFont"
+                                        value="是否关闭X5CustomFont功能"
+                                        onclick="switchTbsX5CustomFontStatus(this.checked)"/>
+                                    <div id="disable_tbs_x5_custom_font_text" style="display:inline;">
+                                        关闭X5内核Custom Font功能
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="disable_embedded_widget_for_video" type="checkbox"
+                                        name="namesDisableEmbeddedWidgetForVideo"
+                                        value="是否关闭QB视频同层渲染框架通路"
+                                        onclick="switchTbsX5EmbeddedWidgetForVideo(this.checked)"/>
+                                    <div id="disable_embedded_widget_for_video" style="display:inline;">
+                                        关闭QB视频同层渲染框架通路
+                                    </div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="enable_king_card" type="checkbox"
+                                        name="namesSwitchEnableKingCard"
+                                        value="是否开启王卡"
+                                        onclick="switchEnableKingCard(this.checked)"/>
+                                    <div style="display:inline">是否开启王卡</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+                            
+                            <td>
+                                <br>
+                                修改TBS内核版本号：(暗码：20171022)
+                                <br>
+                                <input type="text" id="set_tbs_core_version" value=""
+                                    style="height: 26px; font-size: 13px; width: 100%; ">
+                                <br>
+                                <br>
+                                <input type="button" onclick="submit_tbs_core_version()" value="提  交"
+                                    style=" height: 26px; font-size: 13px; ">
+                                </tr>
+                                <tr>
+                                    <td><br></td>
+                                </tr>
+                                
+                                <tr>
+                                    <td>
+                                        设置WUP Proxy环境URL(空则为正式环境)：
+                                        <br>
+                                        <br>
+                                        <input type="text" id="tbs_wup_proxy_url" value=""
+                                            style="height: 26px; font-size: 13px; width: 60%; ">
+                                        &nbsp;<input type="button" onclick="set_tbs_default_wup_proxy()"
+                                                    value="默认URL"
+                                                    style=" height: 26px; font-size: 13px; ">
+                                        &nbsp;<input type="button" onclick="clear_tbs_wup_proxy_url()"
+                                                    value="清空"
+                                                    style=" height: 26px; font-size: 13px; ">
+                                        <br>
+                                        <br>
+                                        <input type="button" onclick="submit_tbs_wup_proxy_url()"
+                                            value="提交并强制拉取" style=" height: 26px; font-size: 13px; ">
+                                        &nbsp;&nbsp;当前WUP环境:
+                                        <div style="display:inline" id="wup_current_env"></div>
+                                        <br>
+                                        <br>
+                                        <input type="button" onclick="get_wup_preference_info_by_force()"
+                                            value="强制拉取開關" style=" height: 26px; font-size: 13px; ">
+                                        &nbsp;<input type="button" onclick="get_wup_switch_info()"
+                                            value="获取开关" style=" height: 26px; font-size: 13px; ">
+                                        &nbsp;<input type="button" onclick="get_wup_iplist_info_by_force()"
+                                            value="強制拉取iplist信息" style=" height: 26px; font-size: 13px; ">
+                                        <br>
+                                        <br>
+                        <input type="button" onclick="get_wup_domain_info_by_force()"
+                                            value="強制拉取域名" style=" height: 26px; font-size: 13px; ">
+                                        &nbsp;<input type="button" onclick="get_wup_white_list_info()"
+                                            value="获取本地配置文件" style=" height: 26px; font-size: 13px; ">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><br></td>
+                                </tr>
+                            </td>
+                        </table>
+
+
+                        <br>
+                        &nbsp;其他 settings
+                        <br>
+                        <table class="borderRadius" bgcolor="#FFFFFF" width="100%"
+                            cellspacing="2" bordercolor="#AAABA0" style="font-size:13px">
+
+                            <tr>
+                                <td>
+                                    设置UA:&nbsp;
+                                    <select id="ua-id">
+                                    <option value=0 selected="selected"></option>
+                                    <option value=1>PC</option>
+                                    <option value=2>微信</option>
+                                    <option value=3>手Q</option>
+                                    <option value=4>QB</option>
+                                    <option value=5>自定义</option>
+                                    </select>
+                                    <input type="button" onclick="setUA()"
+                                            value="提交" style=" height: 26px; font-size: 13px; ">
+                                    <textarea id="uastr" value="" 
+                                    style="height: 40px; font-size: 13px; width: 100%; "></textarea>
+                                </td>
+
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input type="button" onclick="cleanPlugins()" value="清理本地所有插件"
+                                        style=" height: 26px; font-size: 13px; ">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <input type="button" onclick="getLocalPluginInfo()" value="获取本地插件列表"
+                                        style=" height: 26px; font-size: 13px; ">
+
+                                    <input type="button" onclick="getPluginForce()" value="强制拉取插件列表"
+                                        style=" height: 26px; font-size: 13px; ">
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+
+                            <tr>
+                                <td>
+                                    <input id="" type="submit"
+                                        value="强制打开文件/视频开关"
+                                        onclick="enableFileAndVideoSwitches()"/>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <hr>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <input id="is_test_plugin_env" type="checkbox"
+                                        name="isDebugPluginEnv"
+                                        value="切换plugin测试环境"
+                                        onclick="switchPluginDebugEnv(this.checked)"/>
+                                    <div style="display:inline">plugin 切换测试环境</div>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><br></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+
+            </li>
+
+            <li>
+                <input type="radio" style="position:absolute;top:-9999px;left:-9999px" name="tabs" id="tab7">
+                <label for="tab7">渲染</label>
+                <div id="tab-content7" class="tab-content animated fadeIn">
+                    <div id="auth-check-block-3">
+                        <br>
+                        请输入验证码：
+                        <br>
+                        <input type="text" id="input_password_3" value=""
+                               style="height: 26px; font-size: 13px; width: 100%; ">
+                        <br>
+                        <br>
+                        <input type="button" onclick="checkAuth(3)" value="提  交"
+                               style=" height: 26px; font-size: 13px; ">
+                        </tr>
+                    </div>
+                    <div id="tab-container3" style="display: none">
+                        <div id="render_debug">
+                            <span>RenderDebug控制开关</span>
+                            <table id="render_debug_table" class="borderRadius" bgcolor="#FFFFFF" width="100%" cellspacing="2"
+                                bordercolor="#AAABA0" style="font-size:13px">
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_debug_borders" type="checkbox"
+                                            onclick="setEnableDebugBorders(this.checked)" />
+                                        <div style="display:inline;">内核网格线（新窗口生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_info_panel" type="checkbox"
+                                            onclick="setEnableInfoPanel(this.checked)" />
+                                        <div style="display:inline;">显示信息面板（即时生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_info_panel" type="checkbox"
+                                            onclick="setEnableDebugInfoPanel(this.checked)" />
+                                        <div style="display:inline;">显示调试面板（即时生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_first_screen_info" type="checkbox"
+                                            onclick="setEnableFirstScreenInfo(this.checked)" />
+                                        <div style="display:inline;">显示首屏信息（即时生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_fps_meter" type="checkbox"
+                                            onclick="setEnableFpsMeter(this.checked)" />
+                                        <div style="display:inline;">FPS meter（新窗口生效，软绘时无效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_cpu_raster" type="checkbox"
+                                            onclick="setEnableCpuRaster(this.checked)" />
+                                        <div style="display:inline;">强制走CPU Raster（新窗口生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_sw_draw" type="checkbox"
+                                            onclick="setEnableSWDraw(this.checked)" />
+                                        <div style="display:inline;">强制走软绘（即时生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_ad_filter" type="checkbox"
+                                            onclick="setDisableRenderAdFilter(this.checked)" />
+                                        <div style="display:inline;">关闭渲染广告过滤（新窗口生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_key_log" type="checkbox"
+                                            onclick="setEnableKeyLog(this.checked)" />
+                                        <div style="display:inline;">记录渲染关键日志（即时生效）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_clear_framebuffer_start" type="checkbox" />
+                                        <div style="display:inline;">绘制前ClearColor（即时生效）</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <br><div style="display:inline-block; width: 25%;" align="center">颜色(ARGB)</div>
+                                        <input style="width: 50%;" id="render_debug_clear_color_start" type="text" value="0xFFFF0000" />
+                                        <br><br><div style="display:inline-block; width: 15%;" align="center">x</div>
+                                        <input style="width: 20%;" id="render_debug_clear_x_start" type="text" value="200" />
+                                        <div style="display:inline-block; width: 15%;" align="center">y</div>
+                                        <input style="width: 20%;" id="render_debug_clear_y_start" type="text" value="800" />
+                                        <br><div style="display:inline-block; width: 15%;" align="center">宽</div>
+                                        <input style="width: 20%;" id="render_debug_clear_width_start" type="text" value="800" />
+                                        <div style="display:inline-block; width: 15%;" align="center">高</div>
+                                        <input style="width: 20%;" id="render_debug_clear_height_start" type="text" value="200" />
+                                        <br><br><input type="button" onclick="setEnableClearFrameBufferForStart()" value="设置"
+                                            style="width: 80%; height: 26px; font-size: 13px; ">
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input id="render_debug_clear_framebuffer_end" type="checkbox" />
+                                        <div style="display:inline;">绘制后ClearColor（即时生效）</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td align="center">
+                                        <br><div style="display:inline-block; width: 25%;" align="center">颜色(ARGB)</div>
+                                        <input style="width: 50%;" id="render_debug_clear_color_end" type="text" value="0xFF00FF00" />
+                                        <br><br><div style="display:inline-block; width: 15%;" align="center">x</div>
+                                        <input style="width: 20%;" id="render_debug_clear_x_end" type="text" value="200" />
+                                        <div style="display:inline-block; width: 15%;" align="center">y</div>
+                                        <input style="width: 20%;" id="render_debug_clear_y_end" type="text" value="500" />
+                                        <br><div style="display:inline-block; width: 15%;" align="center">宽</div>
+                                        <input style="width: 20%;" id="render_debug_clear_width_end" type="text" value="800" />
+                                        <div style="display:inline-block; width: 15%;" align="center">高</div>
+                                        <input style="width: 20%;" id="render_debug_clear_height_end" type="text" value="200" />
+                                        <br><br><input type="button" onclick="setEnableClearFrameBufferForEnd()" value="设置"
+                                            style="width: 80%; height: 26px; font-size: 13px; ">
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                        <br>
+                        <div id="render-log">
+                            <span>RenderLog抓取配置</span>
+                            <table id="render-log-table"class="borderRadius" bgcolor="#FFFFFF" width="100%" cellspacing="2"
+                                bordercolor="#AAABA0" style="font-size:13px">
+                                <tr>
+                                    <td>
+                                        <div style="display:inline-block; width: 25%;">目标网址</div>
+                                        <input type="text" id="render-log-url" value="http://m.baidu.com/"
+                                            style="width: 70%; height: 26px; font-size: 13px;">
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <p>日志停止及上传方式：</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="radio" name="render-log-stoptype" id="render-log-stoptype-home" value="1" checked />
+                                        <div style="display:inline">后台（按home键将浏览器切后台）</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="radio" name="render-log-stoptype" id="render-log-stoptype-time" value="2" />
+                                        <div style="display:inline">定时（在指定时间后上传）</div>
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <div style="display:inline-block; width: 40%;">超时上传时间(秒)</div>
+                                        <input type="text" id="render-log-timeout" value="60"
+                                            style="width: 55%; height: 26px; font-size: 13px;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="display:inline-block; width: 40%;">指导页显示时间(秒)</div>
+                                        <input type="text" id="render-log-showguidetime" value="10"
+                                            style="width: 55%; height: 26px; font-size: 13px;">
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <div style="display:inline-block; width: 40%;">MainFrame_num(帧)</div>
+                                        <input type="text" id="render-log-maincount" value="10"
+                                            style="width: 55%; height: 26px; font-size: 13px;">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <div style="display:inline-block; width: 40%;">ImplFrame_num(帧)&nbsp;</div>
+                                        <input type="text" id="render-log-implcount" value="120"
+                                            style="width: 55%; height: 26px; font-size: 13px;">
+                                    </td>
+                                </tr>
+                                <tr><td><hr></td></tr>
+                                <tr>
+                                    <td>
+                                        <input type="button" onclick="startRenderLog()" value="开始抓取RenderLog"
+                                            style=" height: 26px; font-size: 13px; ">
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
-                <div id="file-list">
-                </div>
-                <div class="markdown-body">
-                    <div id="readme">
-                    </div>
-                </div>
-                <div class="preview">
-                    <div class="info">
-                        <div class="file-name"></div>
-                        <div class="btn download">下载</div>
-                        <div class="btn quote">引用</div>
-                        <div class="btn share">分享</div>
-                    </div>
-                    <div class="content"></div>
-                </div>
-                <div class="password-wrapper">
-                    <div class="password">
-                        <input type="password">
-                        <button>提交</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</body>
+            </li>
 
+            <li>
+                <input type="radio" style="position:absolute;top:-9999px;left:-9999px" name="tabs"
+                       id="tab3">
+                <label for="tab3" id="label3" style="display:none">配置</label>
+                <div id="tab-content3" class="tab-content animated fadeIn">
+                    &nbsp;开关及白名单的区域设置
+
+                    <br>
+
+
+                    <br>
+                    &nbsp;选择区域
+                    <br>
+                    <table id="tbs_settings" class="borderRadius" bgcolor="#FFFFFF" width="100%"
+                           cellspacing="2" bordercolor="#AAABA0" style="font-size:13px">
+
+
+                        <tr>
+                            <td>
+                                <input id="qb_select_erea_auto" type="checkbox"
+                                       name="namesSelectAreaAuto"
+                                       value="选择自动判断" onclick="switchSlectAuto(this.checked)"/>
+                                <div style="display:inline">后台自动判断区域</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <hr>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <input id="qb_select_erea_guangdong" type="checkbox"
+                                       name="namesSelectAreaGuangdong"
+                                       value="选择广东" onclick="switchSlectGuangdong(this.checked)"/>
+                                <div style="display:inline">广东</div>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <hr>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <input id="qb_select_erea_not_guangdong" type="checkbox"
+                                       name="namesSelectAreaNotGuangdong"
+                                       value="选择非广东"
+                                       onclick="switchSlectNotGuangdong(this.checked)"/>
+                                <div style="display:inline">非广东</div>
+                            </td>
+                        </tr>
+
+
+                    </table>
+                </div>
+
+            </li>
+
+            <li>
+                <input type="radio" style="position:absolute;top:-9999px;left:-9999px" name="tabs"
+                       id="tab6">
+                <label for="tab6" id="label6" style="display:none" >trace</label>
+                <div id="tab-content6" class="tab-content animated fadeIn">
+                    &nbsp;trace设置
+
+                    <br>
+                    <button id="recoder_trace" style="font-size: 110%;">开启</button>
+                    <button id="stop_trace" style="font-size: 110%;">停止</button>
+                    <button id="upload_trace" style="font-size: 110%;">上传</button>
+                    <div class="overlay record-dialog-overlay" tabindex="0">
+                        <style>
+  .category-presets {
+    padding: 4px;
+  }
+        
+  .categories {
+    font-size: 80%;
+    padding: 10px;
+    -webkit-flex: 1 1 auto;
+  }
+
+  .group-selectors {
+    font-size: 80%;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 6px;
+    -webkit-flex: 0 0 auto;
+  }
+
+  .group-selectors button {
+    padding: 1px;
+  }
+
+  .record-selection-dialog .labeled-option-group {
+    -webkit-flex: 0 0 auto;
+    -webkit-flex-direction: column;
+    -webkit-align-items: left;
+    display: -webkit-flex;
+  }
+
+  .record-selection-dialog .labeled-option {
+    border-top: 0px solid white;
+    border-bottom: 0px solid white;
+  }
+
+  .record-selection-dialog .edit-categories {
+    padding-left: 6px;
+  }
+
+  .record-selection-dialog .edit-categories:after {
+    padding-left: 15px;
+    font-size: 125%;
+  }
+  .record-selection-dialog label {
+	   display: inline;
+       border-radius: 2px 2px 0 0;
+       color: #000;
+       font-size: 12px;
+       font-weight: normal;
+       font-family: 'Roboto', helveti;
+       cursor: pointer;
+       position: relative;
+	background: rgba(255,255,255,0);
+    }
+
+                        </style>
+                        <div class="record-selection-dialog">
+                            <tr-ui-b-info-bar-group
+                                    is="HTMLUnknownElement"></tr-ui-b-info-bar-group>
+                            <div class="category-presets">
+<span class="labeled-option-group categories-expanded"><span class="labeled-option"><input
+        type="radio" id="category-preset-Web-developer" name="category-presets-group"
+        value="blink,cc,netlog,renderer.scheduler,toplevel,v8,x5"><label
+        for="category-preset-Web-developer">Web developer</label></span><span
+        class="labeled-option"><input type="radio" id="category-preset-Input-latency"
+                                      name="category-presets-group"
+                                      value="benchmark,input,evdev,renderer.scheduler,toplevel"><label
+        for="category-preset-Input-latency">Input latency</label></span><span
+        class="labeled-option"><input type="radio" id="category-preset-Rendering"
+                                      name="category-presets-group"
+                                      value="blink,cc,gpu,toplevel,x5"><label
+        for="category-preset-Rendering">Rendering</label></span><span class="labeled-option"><input
+        type="radio" id="category-preset-Javascript-and-rendering" name="category-presets-group"
+        value="blink,cc,gpu,renderer.scheduler,v8,toplevel,x5"><label
+        for="category-preset-Javascript-and-rendering">Javascript and rendering</label></span><span
+        class="labeled-option"><input type="radio" id="category-preset-Frame-Viewer"
+                                      name="category-presets-group"
+                                      value="blink,cc,gpu,renderer.scheduler,v8,toplevel,disabled-by-default-cc.debug,disabled-by-default-cc.debug.picture,disabled-by-default-cc.debug.display_items,x5"><label
+        for="category-preset-Frame-Viewer">Frame Viewer</label></span>
+<span class="labeled-option"><input type="radio" id="category-preset-X5"
+                                    name="category-presets-group"
+                                    value="x5,blink,cc,renderer.scheduler,netlog,android_webview,browser,WebCore"><label
+        for="category-preset-X5">X5</label></span>
+        <span class="labeled-option"><input type="radio" id="category-preset-all"
+                                    name="category-presets-group"
+                                    value="*"><label
+        for="category-preset-all">all</label></span>
+        
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <script type="text/javascript">
+
+	var trace_option = [];
+	var tracing = false;
+
+	document.getElementById("category-preset-X5").checked = true;
+
+	document.getElementById("upload_trace").disabled = true;
+	document.getElementById("stop_trace").disabled = !window.ProxyStatus.isRecordingTrace();
+	document.getElementById("recoder_trace").disabled = window.ProxyStatus.isRecordingTrace();
+
+	document.getElementById("recoder_trace").onclick = function(){	
+		document.getElementById("stop_trace").disabled = false;
+		this.disabled = true;
+		tracing = true;
+		var labelgroup = document.querySelector('.labeled-option-group')
+                var inputs = labelgroup.querySelectorAll('input');
+                for (var i = 0; i < inputs.length; i++) {
+                    if (inputs[i].checked){
+			trace_option = inputs[i].value;
+		    }
+                }
+		
+
+		//console.log(trace_option);
+		//alert("window.ProxyStatus.recoderTrace(trace_option) start" + window.ProxyStatus.stopTrace );
+		window.ProxyStatus.recoderTrace(trace_option);
+	        //alert("window.ProxyStatus.recoderTrace(trace_option) end" );
+	}
+
+	document.getElementById("stop_trace").onclick = function(){
+		document.getElementById("upload_trace").disabled = false;
+		document.getElementById("recoder_trace").disabled = false;
+		this.disabled = true;
+		tracing = false;
+
+		//console.log("window.ProxyStatus.stopTrace() start");
+		//alert("window.ProxyStatus.stopTrace() start" + window.ProxyStatus.stopTrace);
+		window.ProxyStatus.stopTrace();
+		//alert("window.ProxyStatus.stopTrace() end" );
+ 		
+	}
+
+	document.getElementById("upload_trace").onclick = function(){
+ 		if(tracing) return;
+
+		//alert("window.ProxyStatus.uploadTrace() start" + window.ProxyStatus.stopTrace );
+		window.ProxyStatus.uploadTrace();
+		//alert("window.ProxyStatus.uploadTrace() end" );
+	}
+
+                </script>
+            </li>
+
+        </ul>
+    </div>
+</div>
+<!--这里是给用户的tips提示（某开关已经开启/关闭）-->
+<div align="right" style="position:fixed; bottom:10px; color:Blue; font-size:8px">
+    <table id="tipsBack" height="23" border="0" cellpadding="0" cellspacing="0"
+           style="display:none">
+        <tr>
+            <td width="9" background="left.png"></td>
+            <td background="middle.png"><p class="tipsStyle" id="resultTips" align="right"></p></td>
+            <td width="13" background="right.png"></td>
+        </tr>
+    </table>
+</div>
+</body>
 </html>
